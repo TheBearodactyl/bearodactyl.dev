@@ -9,7 +9,8 @@ export default defineNuxtConfig({
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
         { property: 'og:description', content: 'rabies' },
-        { name: 'twitter:title', content: 'The Motherfucking Bearodactyl' }
+        { name: 'twitter:title', content: 'The Motherfucking Bearodactyl' },
+        { name: 'twitter:image', content: 'https://github.com/TheBearodactyl/bearodactyl.dev/raw/refs/heads/main/assets/images/bearodactyl_painting.jpg' }
       ]
     }
   },

@@ -4,7 +4,8 @@ export default defineNuxtConfig({
     head: {
       meta: [
         { property: 'og:type', content: 'website' },
-        { property: 'og:site:name', content: 'The Motherfucking Bearodactyl' },
+        { property: 'og:title', content: "The Motherfucking Bearodactyl" },
+        { property: 'og:image:url', content: 'https://github.com/TheBearodactyl/bearodactyl.dev/raw/refs/heads/main/assets/images/bearodactyl_painting.jpg' },
         { property: 'og:description', content: 'rabies' },
       ]
     }

@@ -4,9 +4,12 @@ export default defineNuxtConfig({
     head: {
       meta: [
         { property: 'og:type', content: 'website' },
-        { property: 'og:title', content: "The Motherfucking Bearodactyl" },
+        { property: 'og:title', content: 'The Motherfucking Bearodactyl' },
         { property: 'og:image', content: '~/assets/images/bearodactyl_painting.jpg' },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
         { property: 'og:description', content: 'rabies' },
+        { name: 'twitter:title', content: 'The Motherfucking Bearodactyl' }
       ]
     }
   },

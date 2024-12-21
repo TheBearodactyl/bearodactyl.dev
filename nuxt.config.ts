@@ -2,10 +2,11 @@
 export default defineNuxtConfig({
   app: {
     head: {
+      title: 'The Motherfucking Bearodactyl',
       meta: [
         { property: 'og:type', content: 'website' },
         { property: 'og:title', content: 'The Motherfucking Bearodactyl' },
-        { property: 'og:image', content: '~/assets/images/bearodactyl_painting.jpg' },
+        { property: 'og:image', content: 'https://github.com/TheBearodactyl/bearodactyl.dev/raw/refs/heads/main/assets/images/bearodactyl_painting.jpg' },
         { property: 'og:image:width', content: '1200' },
         { property: 'og:image:height', content: '630' },
         { property: 'og:description', content: 'rabies' },

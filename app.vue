@@ -9,39 +9,36 @@
 import { ref, onMounted } from 'vue'
 
 const textElement = ref(null)
-const currentSize = ref(8)
+const currentSize = ref(16)
 let player = null
 let animationFrameId = null
-let startTime = null
 
-const TOTAL_DURATION = 3607 * 1000
-const TARGET_SIZE = 500 * 16
-const START_SIZE = 8
+const TARGET_SIZE = 500 * 16 // 500rem in pixels
+const START_SIZE = 16 // 1rem in pixels
 
+// Ease in-out function
 function easeInOut(t) {
   return t < 0.5
     ? 4 * t * t * t
     : 1 - Math.pow(-2 * t + 2, 3) / 2
 }
 
-const updateText = (timestamp) => {
+const updateText = () => {
   if (!player || player.getPlayerState() !== YT.PlayerState.PLAYING) return
   
-  if (!startTime) startTime = timestamp
-  const elapsed = timestamp - startTime
+  const duration = player.getDuration()
+  const currentTime = player.getCurrentTime()
+  const progress = currentTime / duration
+  const easedProgress = easeInOut(progress)
   
-  if (elapsed < TOTAL_DURATION) {
-    const progress = elapsed / TOTAL_DURATION
-    const easedProgress = easeInOut(progress)
-    currentSize.value = START_SIZE + (TARGET_SIZE - START_SIZE) * easedProgress
-    
-    const numberOfAs = Math.max(1, Math.floor(currentSize.value / 5))
-    if (textElement.value) {
-      textElement.value.textContent = 'A'.repeat(numberOfAs)
-    }
-    
-    animationFrameId = requestAnimationFrame(updateText)
+  currentSize.value = START_SIZE + (TARGET_SIZE - START_SIZE) * easedProgress
+  const numberOfAs = Math.max(1, Math.floor(currentSize.value / 5))
+  
+  if (textElement.value) {
+    textElement.value.textContent = 'A'.repeat(numberOfAs)
   }
+  
+  animationFrameId = requestAnimationFrame(updateText)
 }
 
 onMounted(() => {
@@ -69,9 +66,7 @@ onMounted(() => {
 
 const onPlayerStateChange = (event) => {
   if (event.data === YT.PlayerState.PLAYING) {
-    if (!startTime) {
-      requestAnimationFrame(updateText)
-    }
+    requestAnimationFrame(updateText)
   } else {
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId)

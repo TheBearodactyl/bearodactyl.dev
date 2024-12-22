@@ -1,12 +1,7 @@
 <template>
   <div class="container">
-    <h1 class="animate-text" ref="textElement">A</h1>
-    <iframe width="500" height="280" src="https://youtube.com/embed/ypHZ_iKBcoo?autoplay=1&loop=1"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-    >
-    </iframe>
+    <h1 class="animate-text" ref="textElement" :style="{ fontSize: `${currentSize}px` }">A</h1>
+    <div id="player"></div>
   </div>
 </template>
 
@@ -14,48 +9,90 @@
 import { ref, onMounted } from 'vue'
 
 const textElement = ref(null)
+const currentSize = ref(8)
+let player = null
 let animationFrameId = null
-let previousAs = 1
+let startTime = null
 
-onMounted(() => {
-  const updateText = () => {
+const TOTAL_DURATION = 3607 * 1000
+const TARGET_SIZE = 500 * 16
+const START_SIZE = 8
+
+function easeInOut(t) {
+  return t < 0.5
+    ? 4 * t * t * t
+    : 1 - Math.pow(-2 * t + 2, 3) / 2
+}
+
+const updateText = (timestamp) => {
+  if (!player || player.getPlayerState() !== YT.PlayerState.PLAYING) return
+  
+  if (!startTime) startTime = timestamp
+  const elapsed = timestamp - startTime
+  
+  if (elapsed < TOTAL_DURATION) {
+    const progress = elapsed / TOTAL_DURATION
+    const easedProgress = easeInOut(progress)
+    currentSize.value = START_SIZE + (TARGET_SIZE - START_SIZE) * easedProgress
+    
+    const numberOfAs = Math.max(1, Math.floor(currentSize.value / 5))
     if (textElement.value) {
-      const fontSize = parseFloat(window.getComputedStyle(textElement.value).fontSize)
-      const numberOfAs = Math.max(1, Math.floor(fontSize / 5))
-      
-      if (numberOfAs !== previousAs) {
-        textElement.value.textContent = 'A'.repeat(numberOfAs)
-        previousAs = numberOfAs
-      }
+      textElement.value.textContent = 'A'.repeat(numberOfAs)
     }
     
     animationFrameId = requestAnimationFrame(updateText)
   }
+}
 
-  updateText()
+onMounted(() => {
+  const tag = document.createElement('script')
+  tag.src = "https://www.youtube.com/iframe_api"
+  const firstScriptTag = document.getElementsByTagName('script')[0]
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
 
-  return () => {
+  window.onYouTubeIframeAPIReady = () => {
+    player = new YT.Player('player', {
+      height: '280',
+      width: '500',
+      videoId: 'ypHZ_iKBcoo',
+      playerVars: {
+        'autoplay': 1,
+        'loop': 1,
+        'playlist': 'ypHZ_iKBcoo'
+      },
+      events: {
+        'onStateChange': onPlayerStateChange
+      }
+    })
+  }
+})
+
+const onPlayerStateChange = (event) => {
+  if (event.data === YT.PlayerState.PLAYING) {
+    if (!startTime) {
+      requestAnimationFrame(updateText)
+    }
+  } else {
     if (animationFrameId) {
       cancelAnimationFrame(animationFrameId)
     }
+  }
+}
+
+onUnmounted(() => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId)
   }
 })
 </script>
 
 <style>
-@keyframes textGrow {
-  from {
-    font-size: 0.5rem;
-    color: black;
-  }
-  
-  to {
-    font-size: 500rem;
-    color: pink;
-  }
+.animate-text {
+  color: black;
+  transition: color 3s;
 }
 
-.animate-text {
-  animation: textGrow 3607s ease-in-out forwards;
+.animate-text[style*="font-size: 8000"] {
+  color: pink;
 }
 </style>

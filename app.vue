@@ -3,7 +3,7 @@
     <h1 class="animate-text">
       AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     </h1>
-    <audio controls autoplay preload="auto" playsinline :src="aaaaaaUrl"></audio>
+    <audio controls autoplay preload="auto" playsinline :src="aaaaaaUrl" loop></audio>
   </div>
 </template>
 

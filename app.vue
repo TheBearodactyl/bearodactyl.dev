@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1 class="animate-text-grow">
-      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+      BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
     </h1>
   </div>
 </template>

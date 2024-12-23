@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: ['@nuxtjs/tailwindcss', 'nuxt-marquee'],
   css: ['~/assets/css/main.css'],
   postcss: {
     plugins: {

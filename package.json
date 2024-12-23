@@ -10,14 +10,20 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@neodrag/vue": "^2.2.0",
     "nuxt": "^3.14.1592",
     "vue": "latest",
+    "vue-marquee-slider": "^1.0.6",
     "vue-router": "latest"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.12.2",
     "autoprefixer": "^10.4.20",
+    "nuxt-marquee": "^1.0.4",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17"
-  }
+  },
+  "trustedDependencies": [
+    "@parcel/watcher"
+  ]
 }

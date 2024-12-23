@@ -13,7 +13,6 @@
     "@neodrag/vue": "^2.2.0",
     "nuxt": "^3.14.1592",
     "vue": "latest",
-    "vue-marquee-slider": "^1.0.6",
     "vue-router": "latest"
   },
   "devDependencies": {

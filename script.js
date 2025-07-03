@@ -1,3 +1,96 @@
+function random_font_for_class(target_class, interval_seconds, custom_font_list = null) {
+  const default_fonts = [
+    'Arial', 'Verdana', 'Helvetica', 'Times New Roman',
+    'Courier New', 'Georgia', 'Palatino', 'Garamond',
+    'Comic Sans MS', 'Impact', 'Lucida Sans', 'Trebuchet MS'
+  ];
+
+  const font_list = custom_font_list && custom_font_list.length ? custom_font_list : default_fonts;
+  const elements = document.getElementsByClassName(target_class);
+
+  if (elements.length === 0) {
+    console.warn(`No elements with class "${target_class}" found.`);
+    return;
+  }
+
+  function change_font() {
+    const rand_font = font_list[Math.floor(Math.random() * font_list.length)]
+
+    for (let i = 0; i < elements.length; i++) {
+      elements[i].style.fontFamily = rand_font;
+    }
+
+    console.log(`Changed fond to: ${rand_font}`);
+  }
+
+  change_font();
+  const int_id = setInterval(change_font, interval_seconds * 1000);
+
+  return function stop() {
+    clearInterval(int_id);
+    console.log("Font changing stopped");
+  }
+}
+
+function random_font_for_id(target_id, interval_seconds, custom_font_list = null) {
+  const default_fonts = [
+    'Arial', 'Verdana', 'Helvetica', 'Times New Roman',
+    'Courier New', 'Georgia', 'Palatino', 'Garamond',
+    'Comic Sans MS', 'Impact', 'Lucida Sans', 'Trebuchet MS'
+  ];
+
+  const font_list = custom_font_list && custom_font_list.length ? custom_font_list : default_fonts;
+  const element = document.getElementById(target_id);
+
+  if (!element) {
+    console.warn(`Element with id "${target_id}" not found.`);
+    return;
+  }
+
+  function change_font() {
+    const rand_font = font_list[Math.floor(Math.random() * font_list.length)];
+    element.style.fontFamily = rand_font;
+    console.log(`Changed font to: ${rand_font}`);
+  }
+
+  change_font();
+
+  const int_id = setInterval(change_font, interval_seconds * 1000);
+
+  return function stop() {
+    clearInterval(int_id);
+    console.log("Stopped randomizing fonts");
+  };
+}
+
+const fonts = [
+  "Papyrus", "Comic Sans", "Brush Script MT", "Arial", "Arial Black", "Arial Narrow",
+  "Arial Rounded MT Bold", "Avante Garde", "Calibri", "Candara", "Century Gothic",
+  "Franklin Gothic Medium", "Futura", "Geneva", "Gill Sans", "Helvetica", "Impact",
+  "Lucida Grande", "Optima", "Segoe UI", "Tahoma", "Trebuchet MS", "Verdana",
+  "Big Caslon", "Bodoni MT", "Book Antiqua", "Calisto MT", "Cambria", "Didot",
+  "Garamond", "Georgia", "Goudy Old Style", "Hoefler Text", "Lucida Bright", "Palatino",
+  "Perpetua", "Rockwell", "Rockwell Extra Bold", "Baskerville", "Times New Roman",
+  "Consolas", "Courier New", "Lucida Console", "Lucida Sans Typewriter", "Monaco",
+  "Andale Mono", "Copperplate"
+];
+
+const classes = [
+  "epic-tracks-player", "dance", "player-controls", "volume-control", "time-display"
+];
+
+const ids = [
+  "dance-gif", "audio-player", "play-btn", "pause-btn", "stop-btn", "volume", "current-time", "duration"
+];
+
+for (const cls of classes) {
+  random_font_for_class(cls, 0.3, fonts);
+}
+
+for (const id of ids) {
+  random_font_for_id(id, 0.3, fonts);
+}
+
 document.addEventListener("DOMContentLoaded", function() {
   const player = document.getElementById("audio-player");
   const play_btn = document.getElementById("play-btn");

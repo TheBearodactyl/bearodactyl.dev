@@ -1,12 +1,20 @@
+html {
+  background-color: #1e1e2e;
+  /* Base08 */
+}
+
 .epic-tracks-player {
   font-family: Papyrus, fantasy;
-  max-width: 400px;
+  max-width: 600px;
   margin: 20px auto;
   padding: 20px;
   border-radius: 10px;
-  background-color: #f5f5f5;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #1e1e2e;
+  /* Base08 */
+  /*box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);*/
   text-align: center;
+  color: #cdd6f4;
+  /* Base02 */
 }
 
 .player-controls {
@@ -17,9 +25,11 @@
 }
 
 button {
-  background-color: #4CAF50;
+  background-color: #11938c;
+  /* Green */
   border: none;
-  color: white;
+  color: #f8f8f2;
+  /* Base06 */
   padding: 10px 15px;
   margin: 0 5px;
   border-radius: 5px;
@@ -28,7 +38,8 @@ button {
 }
 
 button:hover {
-  background-color: #45A049;
+  background-color: #0b706c;
+  /* Green - darker shade */
 }
 
 .volume-control {
@@ -36,21 +47,24 @@ button:hover {
 }
 
 h2 {
-  color: #333;
+  color: #f8f8f2;
+  /* Base06 */
   margin-bottom: 10px;
 }
 
 .time-display {
   margin-top: 10px;
   font-size: 14px;
-  color: #666;
+  color: #cdd6f4;
+  /* Base02 */
 }
 
 .dance {
-  width: 300px;
-  height: 200px;
+  width: 600px;
+  height: 400px;
   margin: 15px auto;
-  background-color: #222;
+  background-color: #313244;
+  /* Base07 */
   border-radius: 8px;
   overflow: hidden;
 }
@@ -60,4 +74,13 @@ h2 {
   height: 100%;
   object-fit: fill;
   display: block;
+}
+
+.epic-tracks-header {
+  display: flex;
+  justify-content: center;
+  min-width: 100px;
+  font-size: 50px;
+  color: #f8f8f2;
+  /* Base06 */
 }

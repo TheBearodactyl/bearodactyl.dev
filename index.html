@@ -8,32 +8,49 @@
 
 <body>
   <div class="epic-tracks-player">
-    <h2>Epic Tracks</h2>
+    <!--- lmao -->
+    <div class="epic-tracks-header">
+      <h2 id="spaceone">-</h2>
+      <h2 id="spacetwo">-</h2>
+      <h2 id="e">E</h2>
+      <h2 id="p">p</h2>
+      <h2 id="i">i</h2>
+      <h2 id="cspace">c </h2>
+      <h2 id="t">T</h2>
+      <h2 id="r">r</h2>
+      <h2 id="a">a</h2>
+      <h2 id="c">c</h2>
+      <h2 id="k">k</h2>
+      <h2 id="s">s</h2>
+      <h2 id="spacethree">-</h2>
+      <h2 id="spacefour">-</h2>
+    </div>
 
     <div class="dance">
       <img id="dance-gif" src="assets/brocollie.png" alt="Dancing Madeline GIF">
     </div>
 
     <audio id="audio-player" loop>
-      <source src="assets/epic_bg_music.flac" type="audio/flac">
+      <source id="bg-music-src" src="assets/epic_bg_music.flac" type="audio/flac">
       Your browser does not support the `audio` element
     </audio>
 
     <div class="player-controls">
+      <button id="prev">Previous</button>
       <button id="play-btn">Play</button>
       <button id="pause-btn">Pause</button>
       <button id="stop-btn">Stop</button>
+      <button id="next">Next</button>
     </div>
 
     <div class="volume-control">
-      <label for="volume">Volume:</label>
-      <input type="range" id="volume" min="0" max="2" step="0.1" value="2.0">
+      <label for="volume" id="volume-label">Volume:</label>
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.75">
     </div>
     <div class="time-display">
       <span id="current-time">0:00</span> / <span id="duration">0:00</span>
     </div>
-  </div>
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

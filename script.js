@@ -424,7 +424,7 @@ function initialize_effects() {
     "e", "p", "i", "cspace", "t", "r", "a", "c", "k", "s",
     "spaceone", "spacetwo", "spacethree", "spacefour",
     "volume", "volume-label", "current-time", "duration",
-    "prev", "next"
+    "prev", "next", "song-picker"
   ];
 
   class_selectors.forEach(selector => {

@@ -17,6 +17,20 @@ html {
   /* Base02 */
 }
 
+#song-picker {
+  font-family: Papyrus, fantasy;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #1e1e2e;
+  /* Base08 */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  color: #cdd6f4;
+  /* Base02 */
+}
+
 .player-controls {
   display: flex;
   justify-content: center;

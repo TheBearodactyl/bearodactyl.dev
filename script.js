@@ -197,6 +197,7 @@ class AudioPlayerController {
     music_src = "bg-music-src",
     next_btn = "next",
     prev_btn = "prev",
+    song_picker = "song-picker"
   } = {}) {
     this.player = document.getElementById(player_id);
     this.play_button = document.getElementById(play_button_id);
@@ -209,6 +210,7 @@ class AudioPlayerController {
     this.music_src = document.getElementById(music_src);
     this.next_btn = document.getElementById(next_btn);
     this.prev_btn = document.getElementById(prev_btn);
+    this.song_picker = document.getElementById(song_picker);
     this.rainbow_effect = null;
 
     this.initialize();
@@ -220,8 +222,87 @@ class AudioPlayerController {
       return;
     }
 
+    this.populate_song_picker();
     this.setup_event_listeners();
     this.player.volume = this.volume_control.value;
+  }
+
+  populate_song_picker() {
+    SONGS.forEach(song => {
+      const option = document.createElement("option");
+      option.value = song;
+      option.textContent = `Song: ${song}`
+      this.song_picker.appendChild(option);
+    });
+
+    this.song_picker?.addEventListener("change", () => this.handle_song_change());
+  }
+
+  get_mp3_meta(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.readAsArrayBuffer(file);
+      reader.onload = (event) => {
+        const arr_buff = event.target.result;
+        const dat_view = new DataView(arr_buff);
+
+        if (dat_view.getUint8(0) === 0x49 && dat_view.getUint8(1) === 0x44 && dat_view.getUint8(2) === 0x33) {
+          const size = (dat_view.getUint8(6) & 0x7F) << 21 |
+            (dat_view.getUint8(7) & 0x7F) << 14 |
+            (dat_view.getUint8(8) & 0x7F) << 7 |
+            dat_view.getUint8(9) & 0x7F;
+
+          // Loop through the ID3v2 tags
+          let offset = 10; // Skip the header and size bytes
+          while (offset + 10 <= size) {
+            const frame_id = String.fromCharCode(dat_view.getUint8(offset),
+              dat_view.getUint8(offset + 1),
+              dat_view.getUint8(offset + 2),
+              dat_view.getUint8(offset + 3));
+
+            if (frame_id === 'TIT2') {
+              const size = (dat_view.getUint8(offset + 4) & 0x7F) << 21 |
+                (dat_view.getUint8(offset + 5) & 0x7F) << 14 |
+                (dat_view.getUint8(offset + 6) & 0x7F) << 7 |
+                dat_view.getUint8(offset + 7) & 0x7F;
+
+              const encoding = dat_view.getUint8(offset + 8);
+              let title = '';
+              for (let i = offset + 9; i < offset + 9 + size; i++) {
+                if (encoding === 0) {
+                  title += String.fromCharCode(dat_view.getUint8(i));
+                } else if (encoding === 3) {
+                  let charCode = dat_view.getUint8(i);
+                  if ((charCode & 0xE0) === 0xC0 && i + 1 < offset + 9 + size) {
+                    title += String.fromCharCode(((charCode & 0x1F) << 6) | (dat_view.getUint8(++i) & 0x3F));
+                  } else if ((charCode & 0xF0) === 0xE0 && i + 2 < offset + 9 + size) {
+                    title += String.fromCharCode(((charCode & 0x0F) << 12) | ((dat_view.getUint8(++i) & 0x3F) << 6) | (dat_view.getUint8(++i) & 0x3F));
+                  }
+                }
+              }
+
+              resolve(title);
+              return;
+            }
+
+            const frame_size = (dat_view.getUint8(offset + 4) & 0x7F) << 21 |
+              (dat_view.getUint8(offset + 5) & 0x7F) << 14 |
+              (dat_view.getUint8(offset + 6) & 0x7F) << 7 |
+              dat_view.getUint8(offset + 7) & 0x7F;
+            offset += 10 + frame_size;
+          }
+
+          resolve(null);
+        } else {
+          reject('Not an ID3v2 tagged MP3 file');
+        }
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+    });
   }
 
   setup_event_listeners() {
@@ -317,6 +398,17 @@ class AudioPlayerController {
       this.player.src = SONGS[index];
       this.music_src.value = SONGS[index];
     }
+  }
+
+  handle_song_change() {
+    const selected_song = this.song_picker.value;
+    if (this.player && this.music_src) {
+      this.player.src = selected_song;
+      this.music_src.value = selected_song;
+      this.current_song_index = SONGS.indexOf(selected_song);
+      this.update_time_display();
+    }
+    this.player.play();
   }
 }
 

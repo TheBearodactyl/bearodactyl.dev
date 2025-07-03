@@ -1,8 +1,8 @@
 function random_font_for_class(target_class, interval_seconds, custom_font_list = null) {
   const default_fonts = [
-    'Arial', 'Verdana', 'Helvetica', 'Times New Roman',
-    'Courier New', 'Georgia', 'Palatino', 'Garamond',
-    'Comic Sans MS', 'Impact', 'Lucida Sans', 'Trebuchet MS'
+    "Arial", "Verdana", "Helvetica", "Times New Roman",
+    "Courier New", "Georgia", "Palatino", "Garamond",
+    "Comic Sans MS", "Impact", "Lucida Sans", "Trebuchet MS"
   ];
 
   const font_list = custom_font_list && custom_font_list.length ? custom_font_list : default_fonts;
@@ -34,9 +34,9 @@ function random_font_for_class(target_class, interval_seconds, custom_font_list 
 
 function random_font_for_id(target_id, interval_seconds, custom_font_list = null) {
   const default_fonts = [
-    'Arial', 'Verdana', 'Helvetica', 'Times New Roman',
-    'Courier New', 'Georgia', 'Palatino', 'Garamond',
-    'Comic Sans MS', 'Impact', 'Lucida Sans', 'Trebuchet MS'
+    "Arial", "Verdana", "Helvetica", "Times New Roman",
+    "Courier New", "Georgia", "Palatino", "Garamond",
+    "Comic Sans MS", "Impact", "Lucida Sans", "Trebuchet MS"
   ];
 
   const font_list = custom_font_list && custom_font_list.length ? custom_font_list : default_fonts;
@@ -61,6 +61,60 @@ function random_font_for_id(target_id, interval_seconds, custom_font_list = null
     clearInterval(int_id);
     console.log("Stopped randomizing fonts");
   };
+}
+
+function gen_random_col() {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+
+  return color;
+}
+
+function start_col_change(element_id, interval = 30) {
+  const element = document.getElementById(element_id);
+
+  if (!element) {
+    console.error(`Element with ID "${element_id}" not found.`);
+    return;
+  }
+
+  element.style.backgroundColor = gen_random_col();
+
+  const color_interval = setInterval(() => {
+    element.style.backgroundColor = gen_random_col();
+  }, interval);
+
+  return function stop() {
+    clearInterval(color_interval);
+  }
+}
+
+function rainbow_effect(img_id, speed = 10, intensity = 1) {
+  const image = document.getElementById(img_id);
+
+  if (!image) {
+    console.error(`No image found with ID: ${img_id}`);
+    return;
+  }
+
+  const orig_filter = image.style.filter || "";
+  let hue = 0;
+
+  const effect = setInterval(() => {
+    hue = (hue + 1) % 360;
+    image.style.filter = `hue-rotate(${hue * intensity}deg) saturate(1.2)`
+  }, speed);
+
+  return {
+    stop: () => {
+      clearInterval(effect);
+      image.style.filter = orig_filter;
+    }
+  }
 }
 
 const fonts = [
@@ -89,6 +143,7 @@ for (const cls of classes) {
 
 for (const id of ids) {
   random_font_for_id(id, 0.3, fonts);
+  start_col_change(id, 300);
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -105,6 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
     player.play();
     danceline.style.display = "block";
     danceline.src = "assets/epicsauce.gif";
+    rainbow_effect("dance-gif", 5, 3);
   });
 
   pause_btn.addEventListener("click", () => {
@@ -125,12 +181,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
   player.addEventListener("timeupdate", () => {
     const curr_mins = Math.floor(player.currentTime / 60);
-    const curr_secs = Math.floor(player.currentTime % 60).toString().padStart(2, '0');
+    const curr_secs = Math.floor(player.currentTime % 60).toString().padStart(2, "0");
     curr_time_disp.textContent = `${curr_mins}:${curr_secs}`;
 
     if (!isNaN(player.duration)) {
       const dur_mins = Math.floor(player.duration / 60);
-      const dur_secs = Math.floor(player.duration % 60).toString().padStart(2, '0');
+      const dur_secs = Math.floor(player.duration % 60).toString().padStart(2, "0");
 
       dur_disp.textContent = `${dur_mins}:${dur_secs}`;
     }

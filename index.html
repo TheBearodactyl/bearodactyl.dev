@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>The Motherfucking Bearodactyl</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+  <div class="epic-tracks-player">
+    <h2>Epic Tracks</h2>
+
+    <div class="dance">
+      <img id="dance-gif" src="assets/brocollie.png" alt="Dancing Madeline GIF">
+    </div>
+
+    <audio id="audio-player">
+      <source src="assets/epic_bg_music.flac" type="audio/flac">
+      Your browser does not support the `audio` element
+    </audio>
+
+    <div class="player-controls">
+      <button id="play-btn">Play</button>
+      <button id="pause-btn">Pause</button>
+      <button id="stop-btn">Stop</button>
+    </div>
+
+    <div class="volume-control">
+      <label for="volume">Volume:</label>
+      <input type="range" id="volume" min="0" max="2" step="0.1" value="2.0">
+    </div>
+    <div class="time-display">
+      <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>

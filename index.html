@@ -26,6 +26,8 @@
       <h2 id="spacefour">-</h2>
     </div>
 
+    <div id="song-name" class="epic-track-name-display">Now Playing: `void`</div>
+
     <div class="dance">
       <img id="dance-gif" src="assets/brocollie.png" alt="Dancing Madeline GIF">
     </div>
@@ -47,11 +49,22 @@
       <label for="volume" id="volume-label">Volume:</label>
       <input type="range" id="volume" min="0" max="1" step="0.01" value="0.75">
     </div>
+
+    <br />
+
+    <div class="options-bar">
+      <button id="shuffle-toggle">Shuffle: Off</button>
+      <button id="theme-toggle">Change Theme</button>
+      <button id="font-effects-toggle">Font Effects: On</button>
+      <button id="color-effects-toggle">Color Effects: On</button>
+    </div>
+
     <div class="time-display">
       <span id="current-time">0:00</span> / <span id="duration">0:00</span>
     </div>
     <select id="song-picker"></select>
-    <script src="script.js"></script>
+    <div id="custom-song-drop" class="drop-area">Drag and Drop any audio files here!</div>
+    <script src="main.js"></script>
 </body>
 
 </html>

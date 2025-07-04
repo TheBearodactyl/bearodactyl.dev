@@ -19,6 +19,7 @@ const EXTENDED_FONTS: string[] = [
 const SONGS: string[] = [
   "assets/epic_bg_music.flac",
   "assets/epic_bg_music_1.flac",
+  "assets/epic_bg_music_2.flac",
   "assets/songs/epic_music006.mp3",
   "assets/songs/epic_music012.mp3",
   "assets/songs/epic_music016.mp3",

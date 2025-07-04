@@ -1,18 +1,10 @@
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
-var DEFAULT_FONTS = [
+"use strict";
+const DEFAULT_FONTS = [
     "Arial", "Verdana", "Helvetica", "Times New Roman",
     "Courier New", "Georgia", "Palatino", "Garamond",
     "Comic Sans MS", "Impact", "Lucida Sans", "Trebuchet MS"
 ];
-var EXTENDED_FONTS = [
+const EXTENDED_FONTS = [
     "Papyrus", "Comic Sans", "Brush Script MT", "Arial", "Arial Black", "Arial Narrow",
     "Arial Rounded MT Bold", "Avante Garde", "Calibri", "Candara", "Century Gothic",
     "Franklin Gothic Medium", "Futura", "Geneva", "Gill Sans", "Helvetica", "Impact",
@@ -23,9 +15,10 @@ var EXTENDED_FONTS = [
     "Consolas", "Courier New", "Lucida Console", "Lucida Sans Typewriter", "Monaco",
     "Andale Mono", "Copperplate"
 ];
-var SONGS = [
+const SONGS = [
     "assets/epic_bg_music.flac",
     "assets/epic_bg_music_1.flac",
+    "assets/epic_bg_music_2.flac",
     "assets/songs/epic_music006.mp3",
     "assets/songs/epic_music012.mp3",
     "assets/songs/epic_music016.mp3",
@@ -44,114 +37,102 @@ var SONGS = [
     "assets/songs/epic_music061.mp3",
     "assets/songs/epic_music066.mp3",
 ];
-var DomEffects = /** @class */ (function () {
-    function DomEffects() {
-    }
-    DomEffects.random_font_for_class = function (cls, interval_ms, fonts) {
-        if (fonts === void 0) { fonts = DEFAULT_FONTS; }
-        var elements = document.getElementsByClassName(cls);
+class DomEffects {
+    static random_font_for_class(cls, interval_ms, fonts = DEFAULT_FONTS) {
+        const elements = document.getElementsByClassName(cls);
         if (elements.length === 0) {
-            console.warn("No elements with class \"".concat(cls, "\" found."));
-            return { stop: function () { } };
+            console.warn(`No elements with class "${cls}" found.`);
+            return { stop: () => { } };
         }
-        var change_font = function () {
-            var rand_font = fonts[Math.floor(Math.random() * fonts.length)];
-            Array.from(elements).forEach(function (element) {
+        const change_font = () => {
+            const rand_font = fonts[Math.floor(Math.random() * fonts.length)];
+            Array.from(elements).forEach(element => {
                 element.style.fontFamily = rand_font;
             });
-            console.log("Changed font to: ".concat(rand_font));
+            console.log(`Changed font to: ${rand_font}`);
         };
         change_font();
-        var interval_id = setInterval(change_font, interval_ms * 1000);
+        const interval_id = setInterval(change_font, interval_ms * 1000);
         return {
-            stop: function () { return clearInterval(interval_id); }
+            stop: () => clearInterval(interval_id)
         };
-    };
-    DomEffects.random_font_for_id = function (id, interval_ms, fonts) {
-        if (fonts === void 0) { fonts = null; }
-        var font_list = ((fonts === null || fonts === void 0 ? void 0 : fonts.length) ? fonts : DEFAULT_FONTS);
-        var element = document.getElementById(id);
+    }
+    static random_font_for_id(id, interval_ms, fonts = null) {
+        const font_list = (fonts?.length ? fonts : DEFAULT_FONTS);
+        const element = document.getElementById(id);
         if (!element) {
-            console.warn("Element with id \"".concat(id, "\" not found."));
-            return { stop: function () { } };
+            console.warn(`Element with id "${id}" not found.`);
+            return { stop: () => { } };
         }
-        var change_font = function () {
-            var random_font = font_list[Math.floor(Math.random() * font_list.length)];
+        const change_font = () => {
+            const random_font = font_list[Math.floor(Math.random() * font_list.length)];
             element.style.fontFamily = random_font;
-            console.log("Changed font to: ".concat(random_font));
+            console.log(`Changed font to: ${random_font}`);
         };
         change_font();
-        var interval_id = setInterval(change_font, interval_ms * 1000);
+        const interval_id = setInterval(change_font, interval_ms * 1000);
         return {
-            stop: function () { return clearInterval(interval_id); }
+            stop: () => clearInterval(interval_id)
         };
-    };
-    DomEffects.generate_random_color = function () {
-        var letters = "0123456789ABCDEF";
-        return "#" + Array.from({ length: 6 }, function () {
-            return letters[Math.floor(Math.random() * 16)];
-        }).join("");
-    };
-    DomEffects.start_color_change = function (element_id, interval_ms) {
-        var _this = this;
-        if (interval_ms === void 0) { interval_ms = 300; }
-        var element = document.getElementById(element_id);
+    }
+    static generate_random_color() {
+        const letters = "0123456789ABCDEF";
+        return "#" + Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join("");
+    }
+    static start_color_change(element_id, interval_ms = 300) {
+        const element = document.getElementById(element_id);
         if (!element) {
-            console.error("Element with ID \"".concat(element_id, "\" not found."));
-            return { stop: function () { } };
+            console.error(`Element with ID "${element_id}" not found.`);
+            return { stop: () => { } };
         }
-        var apply_color = function () {
-            element.style.backgroundColor = _this.generate_random_color();
-            element.style.color = _this.generate_random_color();
+        const apply_color = () => {
+            element.style.backgroundColor = this.generate_random_color();
+            element.style.color = this.generate_random_color();
         };
         apply_color();
-        var interval_id = setInterval(apply_color, interval_ms);
+        const interval_id = setInterval(apply_color, interval_ms);
         return {
-            stop: function () { return clearInterval(interval_id); }
+            stop: () => clearInterval(interval_id)
         };
-    };
-    DomEffects.woke_mind_virus = function (image_id, speed_ms, intensity) {
-        if (speed_ms === void 0) { speed_ms = 10; }
-        if (intensity === void 0) { intensity = 5; }
-        var image = document.getElementById(image_id);
+    }
+    static woke_mind_virus(image_id, speed_ms = 10, intensity = 5) {
+        const image = document.getElementById(image_id);
         if (!image) {
-            console.error("No image found with ID: ".concat(image_id));
-            return { stop: function () { } };
+            console.error(`No image found with ID: ${image_id}`);
+            return { stop: () => { } };
         }
-        var original_filter = image.style.filter;
-        var hue = 0;
-        var interval_id = setInterval(function () {
+        const original_filter = image.style.filter;
+        let hue = 0;
+        const interval_id = setInterval(() => {
             hue = (hue + 1) % 360;
-            image.style.filter = "hue-rotate(".concat(hue * intensity, "deg) saturate(1.2)");
+            image.style.filter = `hue-rotate(${hue * intensity}deg) saturate(1.2)`;
         }, speed_ms);
         return {
-            stop: function () {
+            stop: () => {
                 clearInterval(interval_id);
                 image.style.filter = original_filter;
             }
         };
-    };
-    DomEffects.force_click = function (element) {
+    }
+    static force_click(element) {
         if (!element) {
             console.warn('No element provided');
             return;
         }
-        var rect = element.getBoundingClientRect();
-        var x = rect.left + rect.width / 2;
-        var y = rect.top + rect.height / 2;
-        var mouse_events = [
+        const rect = element.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        const mouse_events = [
             new MouseEvent('mousedown', { view: window, bubbles: true, cancelable: true, clientX: x, clientY: y }),
             new MouseEvent('mouseup', { view: window, bubbles: true, cancelable: true, clientX: x, clientY: y }),
             new MouseEvent('click', { view: window, bubbles: true, cancelable: true, clientX: x, clientY: y })
         ];
-        mouse_events.forEach(function (event) { return element.dispatchEvent(event); });
-    };
-    return DomEffects;
-}());
+        mouse_events.forEach(event => element.dispatchEvent(event));
+    }
+}
 ;
-var AudioPlayerController = /** @class */ (function () {
-    function AudioPlayerController(_a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.player_id, player_id = _c === void 0 ? "audio-player" : _c, _d = _b.play_button_id, play_button_id = _d === void 0 ? "play-btn" : _d, _e = _b.pause_button_id, pause_button_id = _e === void 0 ? "pause-btn" : _e, _f = _b.stop_button_id, stop_button_id = _f === void 0 ? "stop-btn" : _f, _g = _b.volume_control_id, volume_control_id = _g === void 0 ? "volume" : _g, _h = _b.current_time_display_id, current_time_display_id = _h === void 0 ? "current-time" : _h, _j = _b.duration_display_id, duration_display_id = _j === void 0 ? "duration" : _j, _k = _b.dance_image_id, dance_image_id = _k === void 0 ? "dance-gif" : _k, _l = _b.music_src, music_src = _l === void 0 ? "bg-music-src" : _l, _m = _b.next_btn, next_btn = _m === void 0 ? "next" : _m, _o = _b.prev_btn, prev_btn = _o === void 0 ? "prev" : _o, _p = _b.song_picker, song_picker = _p === void 0 ? "song-picker" : _p, _q = _b.shuffle_toggle, shuffle_toggle = _q === void 0 ? "shuffle-toggle" : _q;
+class AudioPlayerController {
+    constructor({ player_id = "audio-player", play_button_id = "play-btn", pause_button_id = "pause-btn", stop_button_id = "stop-btn", volume_control_id = "volume", current_time_display_id = "current-time", duration_display_id = "duration", dance_image_id = "dance-gif", music_src = "bg-music-src", next_btn = "next", prev_btn = "prev", song_picker = "song-picker", shuffle_toggle = "shuffle-toggle", } = {}) {
         this.rainbow_effect = null;
         this.current_song_index = 0;
         this.is_shuffling = false;
@@ -163,7 +144,7 @@ var AudioPlayerController = /** @class */ (function () {
         this.shuffle_index = 0;
         this.font_effect_handles = [];
         this.color_effect_handles = [];
-        var player = document.getElementById(player_id);
+        const player = document.getElementById(player_id);
         if (!player)
             throw new Error("Audio player element not found");
         this.player = player;
@@ -183,87 +164,81 @@ var AudioPlayerController = /** @class */ (function () {
         this.load_settings();
         this.load_custom_songs();
     }
-    AudioPlayerController.prototype.initialize = function () {
+    initialize() {
         this.populate_song_picker();
         this.setup_event_listeners();
         if (this.volume_control) {
             this.player.volume = Number(this.volume_control.value);
         }
-    };
-    AudioPlayerController.prototype.shuffle_songs = function () {
-        this.shuffled_playlist = __spreadArray([], SONGS, true).sort(function () { return Math.random() - 0.5; });
+    }
+    shuffle_songs() {
+        this.shuffled_playlist = [...SONGS].sort(() => Math.random() - 0.5);
         this.shuffle_index = 0;
-    };
-    AudioPlayerController.prototype.init_shuffle_and_theme_btns = function () {
-        var _this = this;
-        var shuffle_btn = this.shuffle_toggle;
-        shuffle_btn === null || shuffle_btn === void 0 ? void 0 : shuffle_btn.addEventListener("click", function () {
-            _this.is_shuffling = !_this.is_shuffling;
-            shuffle_btn.textContent = _this.is_shuffling ? "Every Day I'm Shufflin'" : "No more shufflin :(";
-            _this.save_settings();
+    }
+    init_shuffle_and_theme_btns() {
+        const shuffle_btn = this.shuffle_toggle;
+        shuffle_btn?.addEventListener("click", () => {
+            this.is_shuffling = !this.is_shuffling;
+            shuffle_btn.textContent = this.is_shuffling ? "Every Day I'm Shufflin'" : "No more shufflin :(";
+            this.save_settings();
         });
         shuffle_btn && (shuffle_btn.textContent = this.is_shuffling ? "Every Day I'm Shufflin'" : "No more shufflin :(");
         if (this.is_shuffling) {
             this.shuffle_songs();
         }
-    };
-    AudioPlayerController.prototype.setup_drag_drop = function () {
-        var _this = this;
-        var dropper = document.getElementById("custom-song-drop");
+    }
+    setup_drag_drop() {
+        const dropper = document.getElementById("custom-song-drop");
         if (!dropper)
             return;
-        dropper.addEventListener("dragover", function (e) {
+        dropper.addEventListener("dragover", e => {
             e.preventDefault();
             dropper.classList.add("dragging");
         });
-        dropper.addEventListener("dragleave", function () {
+        dropper.addEventListener("dragleave", () => {
             dropper.classList.remove("dragging");
         });
-        dropper.addEventListener("drop", function (e) {
-            var _a;
+        dropper.addEventListener("drop", e => {
             e.preventDefault();
             dropper.classList.remove("dragging");
-            var files = Array.from(((_a = e.dataTransfer) === null || _a === void 0 ? void 0 : _a.files) || []);
+            const files = Array.from(e.dataTransfer?.files || []);
             if (files.length > 0) {
-                var url = URL.createObjectURL(files[0]);
-                _this.player.src = url;
-                _this.player.play();
-                document.getElementById("song-name").textContent = "Song: ".concat(files[0].name);
-                _this.custom_songs.push(url);
-                _this.save_custom_songs();
-                _this.update_song_picker();
+                const url = URL.createObjectURL(files[0]);
+                this.player.src = url;
+                this.player.play();
+                document.getElementById("song-name").textContent = `Song: ${files[0].name}`;
+                this.custom_songs.push(url);
+                this.save_custom_songs();
+                this.update_song_picker();
             }
         });
-    };
-    AudioPlayerController.prototype.update_song_name = function () {
-        var song = this.player.src.split("/").pop();
-        document.getElementById("song-name").textContent = "\uD83C\uDFB6 Now Playing: ".concat(decodeURIComponent(song !== null && song !== void 0 ? song : "Unknown"));
-    };
-    AudioPlayerController.prototype.populate_song_picker = function () {
-        var _this = this;
+    }
+    update_song_name() {
+        const song = this.player.src.split("/").pop();
+        document.getElementById("song-name").textContent = `🎶 Now Playing: ${decodeURIComponent(song ?? "Unknown")}`;
+    }
+    populate_song_picker() {
         if (!this.song_picker)
             return;
-        SONGS.forEach(function (song) {
-            var option = document.createElement("option");
+        SONGS.forEach(song => {
+            const option = document.createElement("option");
             option.value = song;
-            option.textContent = "Song: ".concat(song);
-            _this.song_picker.appendChild(option);
+            option.textContent = `Song: ${song}`;
+            this.song_picker.appendChild(option);
         });
-        this.song_picker.addEventListener("change", function () { return _this.handle_song_change(); });
-    };
-    AudioPlayerController.prototype.setup_event_listeners = function () {
-        var _this = this;
-        var _a, _b, _c, _d, _e, _f;
-        (_a = this.play_button) === null || _a === void 0 ? void 0 : _a.addEventListener("click", function () { return _this.handle_play(); });
-        (_b = this.pause_button) === null || _b === void 0 ? void 0 : _b.addEventListener("click", function () { return _this.handle_pause(); });
-        (_c = this.stop_button) === null || _c === void 0 ? void 0 : _c.addEventListener("click", function () { return _this.handle_stop(); });
-        (_d = this.volume_control) === null || _d === void 0 ? void 0 : _d.addEventListener("input", function () { return _this.handle_volume_change(); });
-        this.player.addEventListener("timeupdate", function () { return _this.update_time_display(); });
-        this.player.addEventListener("ended", function () { return _this.handle_playback_end(); });
-        (_e = this.next_btn) === null || _e === void 0 ? void 0 : _e.addEventListener("click", function () { return _this.handle_next_song(); });
-        (_f = this.prev_btn) === null || _f === void 0 ? void 0 : _f.addEventListener("click", function () { return _this.handle_prev_song(); });
-    };
-    AudioPlayerController.prototype.handle_play = function () {
+        this.song_picker.addEventListener("change", () => this.handle_song_change());
+    }
+    setup_event_listeners() {
+        this.play_button?.addEventListener("click", () => this.handle_play());
+        this.pause_button?.addEventListener("click", () => this.handle_pause());
+        this.stop_button?.addEventListener("click", () => this.handle_stop());
+        this.volume_control?.addEventListener("input", () => this.handle_volume_change());
+        this.player.addEventListener("timeupdate", () => this.update_time_display());
+        this.player.addEventListener("ended", () => this.handle_playback_end());
+        this.next_btn?.addEventListener("click", () => this.handle_next_song());
+        this.prev_btn?.addEventListener("click", () => this.handle_prev_song());
+    }
+    handle_play() {
         this.is_playing = true;
         this.player.play();
         if (this.dance_image) {
@@ -272,19 +247,17 @@ var AudioPlayerController = /** @class */ (function () {
             this.rainbow_effect = DomEffects.woke_mind_virus("dance-gif", 5, 3);
         }
         this.update_song_name();
-    };
-    AudioPlayerController.prototype.handle_pause = function () {
-        var _a;
+    }
+    handle_pause() {
         this.is_playing = false;
         this.player.pause();
         if (this.dance_image) {
             this.dance_image.src = "assets/brocollie.png";
-            (_a = this.rainbow_effect) === null || _a === void 0 ? void 0 : _a.stop();
+            this.rainbow_effect?.stop();
             this.rainbow_effect = null;
         }
-    };
-    AudioPlayerController.prototype.handle_stop = function () {
-        var _a;
+    }
+    handle_stop() {
         this.is_playing = false;
         this.player.pause();
         this.player.currentTime = 0;
@@ -292,42 +265,41 @@ var AudioPlayerController = /** @class */ (function () {
         if (this.dance_image) {
             this.dance_image.src = "assets/brocollie.png";
             this.dance_image.style.display = "block";
-            (_a = this.rainbow_effect) === null || _a === void 0 ? void 0 : _a.stop();
+            this.rainbow_effect?.stop();
             this.rainbow_effect = null;
         }
-    };
-    AudioPlayerController.prototype.handle_volume_change = function () {
+    }
+    handle_volume_change() {
         if (this.volume_control) {
             this.player.volume = Number(this.volume_control.value);
         }
-    };
-    AudioPlayerController.prototype.update_time_display = function () {
-        var current_mins = Math.floor(this.player.currentTime / 60);
-        var current_secs = Math.floor(this.player.currentTime % 60).toString().padStart(2, "0");
+    }
+    update_time_display() {
+        const current_mins = Math.floor(this.player.currentTime / 60);
+        const current_secs = Math.floor(this.player.currentTime % 60).toString().padStart(2, "0");
         if (this.current_time_display) {
-            this.current_time_display.textContent = "".concat(current_mins, ":").concat(current_secs);
+            this.current_time_display.textContent = `${current_mins}:${current_secs}`;
         }
         if (!isNaN(this.player.duration) && this.duration_display) {
-            var duration_mins = Math.floor(this.player.duration / 60);
-            var duration_secs = Math.floor(this.player.duration % 60).toString().padStart(2, "0");
-            this.duration_display.textContent = "".concat(duration_mins, ":").concat(duration_secs);
+            const duration_mins = Math.floor(this.player.duration / 60);
+            const duration_secs = Math.floor(this.player.duration % 60).toString().padStart(2, "0");
+            this.duration_display.textContent = `${duration_mins}:${duration_secs}`;
         }
-    };
-    AudioPlayerController.prototype.handle_playback_end = function () {
-        var _a;
+    }
+    handle_playback_end() {
         if (this.dance_image) {
             this.dance_image.src = "assets/brocollie.png";
         }
-        (_a = this.rainbow_effect) === null || _a === void 0 ? void 0 : _a.stop();
+        this.rainbow_effect?.stop();
         this.rainbow_effect = null;
         this.handle_next_song();
-    };
-    AudioPlayerController.prototype.handle_next_song = function () {
+    }
+    handle_next_song() {
         if (this.is_shuffling) {
             if (this.shuffled_playlist.length === 0 || this.shuffle_index >= this.shuffled_playlist.length) {
                 this.shuffle_songs();
             }
-            var next_song = this.shuffled_playlist[this.shuffle_index++];
+            const next_song = this.shuffled_playlist[this.shuffle_index++];
             this.current_song_index = SONGS.indexOf(next_song);
             this.player.src = next_song;
         }
@@ -339,8 +311,8 @@ var AudioPlayerController = /** @class */ (function () {
         if (this.is_playing) {
             this.player.play();
         }
-    };
-    AudioPlayerController.prototype.handle_prev_song = function () {
+    }
+    handle_prev_song() {
         this.current_song_index = (this.current_song_index - 1 + SONGS.length) % SONGS.length;
         this.change_song_source(this.current_song_index);
         this.update_time_display();
@@ -349,17 +321,16 @@ var AudioPlayerController = /** @class */ (function () {
             this.player.play();
         }
         this.update_song_name();
-    };
-    AudioPlayerController.prototype.change_song_source = function (index) {
+    }
+    change_song_source(index) {
         if (this.music_src) {
             this.player.src = SONGS[index];
             this.music_src.value = SONGS[index];
         }
         this.update_song_name();
-    };
-    AudioPlayerController.prototype.handle_song_change = function () {
-        var _a;
-        var selected_song = (_a = this.song_picker) === null || _a === void 0 ? void 0 : _a.value;
+    }
+    handle_song_change() {
+        const selected_song = this.song_picker?.value;
         if (!selected_song)
             return;
         this.player.src = selected_song;
@@ -368,11 +339,11 @@ var AudioPlayerController = /** @class */ (function () {
         this.update_time_display();
         this.player.play();
         this.update_song_name();
-    };
-    AudioPlayerController.prototype.load_settings = function () {
-        var settings = localStorage.getItem("settings");
+    }
+    load_settings() {
+        const settings = localStorage.getItem("settings");
         if (settings) {
-            var parsed = JSON.parse(settings);
+            const parsed = JSON.parse(settings);
             this.font_effects_enabled = parsed.font_effects !== false;
             this.color_effects_enabled = parsed.color_effects !== false;
             this.is_shuffling = parsed.shuffle || false;
@@ -381,51 +352,49 @@ var AudioPlayerController = /** @class */ (function () {
                 this.player.volume = Number(this.volume_control.value);
             }
         }
-    };
-    AudioPlayerController.prototype.save_settings = function () {
-        var _a;
+    }
+    save_settings() {
         localStorage.setItem("settings", JSON.stringify({
             font_effects: this.font_effects_enabled,
             color_effects: this.color_effects_enabled,
             shuffle: this.is_shuffling,
-            volume: ((_a = this.volume_control) === null || _a === void 0 ? void 0 : _a.value) || '0.75'
+            volume: this.volume_control?.value || '0.75'
         }));
-    };
-    AudioPlayerController.prototype.load_custom_songs = function () {
-        var songs = localStorage.getItem("custom_songs");
+    }
+    load_custom_songs() {
+        const songs = localStorage.getItem("custom_songs");
         if (songs) {
             this.custom_songs = JSON.parse(songs);
             this.update_song_picker();
         }
-    };
-    AudioPlayerController.prototype.save_custom_songs = function () {
+    }
+    save_custom_songs() {
         localStorage.setItem("custom_songs", JSON.stringify(this.custom_songs));
-    };
-    AudioPlayerController.prototype.update_song_picker = function () {
-        var _this = this;
+    }
+    update_song_picker() {
         if (!this.song_picker)
             return;
         this.song_picker.innerHTML = '';
-        SONGS.forEach(function (song) {
-            var option = document.createElement("option");
+        SONGS.forEach(song => {
+            const option = document.createElement("option");
             option.value = song;
-            option.textContent = "Song: ".concat(song.split('/').pop());
-            _this.song_picker.append(option);
+            option.textContent = `Song: ${song.split('/').pop()}`;
+            this.song_picker.append(option);
         });
-        this.custom_songs.forEach(function (song) {
-            var option = document.createElement("option");
+        this.custom_songs.forEach(song => {
+            const option = document.createElement("option");
             option.value = song;
-            option.textContent = "Custom: ".concat(song.split('/').pop());
-            _this.song_picker.appendChild(option);
+            option.textContent = `Custom: ${song.split('/').pop()}`;
+            this.song_picker.appendChild(option);
         });
-    };
-    AudioPlayerController.prototype.apply_font_effects = function () {
-        var class_selectors = [
+    }
+    apply_font_effects() {
+        const class_selectors = [
             "epic-tracks-player", "dance", "player-controls",
             "volume-control", "time-display", "track-switcher",
             "options-bar"
         ];
-        var id_selectors = [
+        const id_selectors = [
             "dance-gif", "audio-player", "play-btn",
             "pause-btn", "stop-btn", "volume",
             "e", "p", "i", "cspace", "t", "r", "a", "c", "k", "s",
@@ -433,14 +402,17 @@ var AudioPlayerController = /** @class */ (function () {
             "volume", "volume-label", "current-time", "duration",
             "prev", "next", "song-picker", "shuffle-toggle", "theme-toggle"
         ];
-        this.font_effect_handles = __spreadArray(__spreadArray([], class_selectors.map(function (cls) { return DomEffects.random_font_for_class(cls, 0.3, EXTENDED_FONTS); }), true), id_selectors.map(function (id) { return DomEffects.random_font_for_id(id, 0.5, EXTENDED_FONTS); }), true);
-    };
-    AudioPlayerController.prototype.remove_font_effects = function () {
-        this.font_effect_handles.forEach(function (handle) { return handle.stop(); });
+        this.font_effect_handles = [
+            ...class_selectors.map(cls => DomEffects.random_font_for_class(cls, 0.3, EXTENDED_FONTS)),
+            ...id_selectors.map(id => DomEffects.random_font_for_id(id, 0.5, EXTENDED_FONTS))
+        ];
+    }
+    remove_font_effects() {
+        this.font_effect_handles.forEach(handle => handle.stop());
         this.font_effect_handles = [];
-    };
-    AudioPlayerController.prototype.apply_color_effects = function () {
-        var id_selectors = [
+    }
+    apply_color_effects() {
+        const id_selectors = [
             "dance-gif", "audio-player", "play-btn",
             "pause-btn", "stop-btn", "volume",
             "e", "p", "i", "cspace", "t", "r", "a", "c", "k", "s",
@@ -448,40 +420,33 @@ var AudioPlayerController = /** @class */ (function () {
             "volume", "volume-label", "current-time", "duration",
             "prev", "next", "song-picker", "shuffle-toggle", "theme-toggle"
         ];
-        this.color_effect_handles = id_selectors.map(function (id) {
-            return DomEffects.start_color_change(id, 200);
-        });
-    };
-    AudioPlayerController.prototype.remove_color_effects = function () {
-        this.color_effect_handles.forEach(function (handle) { return handle.stop(); });
+        this.color_effect_handles = id_selectors.map(id => DomEffects.start_color_change(id, 200));
+    }
+    remove_color_effects() {
+        this.color_effect_handles.forEach(handle => handle.stop());
         this.color_effect_handles = [];
-    };
-    return AudioPlayerController;
-}());
+    }
+}
 function initialize_effects() {
     function death_to_america() {
-        var dta = document.getElementById("death-to-america");
+        const dta = document.getElementById("death-to-america");
         if (!dta)
             return;
-        window.addEventListener("scroll", function () {
-            var win_btm = window.innerHeight + window.scrollY;
-            var doc_hgt = document.documentElement.scrollHeight;
-            if (win_btm < doc_hgt)
-                return;
+        window.addEventListener("scroll", () => {
             if (dta.style.display !== "block") {
                 dta.style.display = "block";
-                setTimeout(function () {
+                setTimeout(() => {
                     dta.style.opacity = "1";
                 }, 50);
             }
         });
     }
-    var audio_controller = new AudioPlayerController();
-    var font_effects_toggle = document.getElementById("font-effects-toggle");
-    var color_effects_toggle = document.getElementById("color-effects-toggle");
-    font_effects_toggle === null || font_effects_toggle === void 0 ? void 0 : font_effects_toggle.addEventListener("click", function () {
+    const audio_controller = new AudioPlayerController();
+    const font_effects_toggle = document.getElementById("font-effects-toggle");
+    const color_effects_toggle = document.getElementById("color-effects-toggle");
+    font_effects_toggle?.addEventListener("click", () => {
         audio_controller.font_effects_enabled = !audio_controller.font_effects_enabled;
-        font_effects_toggle.textContent = "Font Effects: ".concat(audio_controller.font_effects_enabled ? 'On' : 'Off');
+        font_effects_toggle.textContent = `Font Effects: ${audio_controller.font_effects_enabled ? 'On' : 'Off'}`;
         if (audio_controller.font_effects_enabled) {
             audio_controller.apply_font_effects();
         }
@@ -490,9 +455,9 @@ function initialize_effects() {
         }
         audio_controller.save_settings();
     });
-    color_effects_toggle === null || color_effects_toggle === void 0 ? void 0 : color_effects_toggle.addEventListener("click", function () {
+    color_effects_toggle?.addEventListener("click", () => {
         audio_controller.color_effects_enabled = !audio_controller.color_effects_enabled;
-        color_effects_toggle.textContent = "Color Effects: ".concat(audio_controller.color_effects_enabled ? 'On' : 'Off');
+        color_effects_toggle.textContent = `Color Effects: ${audio_controller.color_effects_enabled ? 'On' : 'Off'}`;
         if (audio_controller.color_effects_enabled) {
             audio_controller.apply_color_effects();
         }
@@ -501,8 +466,8 @@ function initialize_effects() {
         }
         audio_controller.save_settings();
     });
-    font_effects_toggle && (font_effects_toggle.textContent = "Font Effects: ".concat(audio_controller.font_effects_enabled ? 'On' : 'Off'));
-    color_effects_toggle && (color_effects_toggle.textContent = "Color Effects: ".concat(audio_controller.color_effects_enabled ? 'On' : 'Off'));
+    font_effects_toggle && (font_effects_toggle.textContent = `Font Effects: ${audio_controller.font_effects_enabled ? 'On' : 'Off'}`);
+    color_effects_toggle && (color_effects_toggle.textContent = `Color Effects: ${audio_controller.color_effects_enabled ? 'On' : 'Off'}`);
     audio_controller.init_shuffle_and_theme_btns();
     audio_controller.setup_drag_drop();
     death_to_america();

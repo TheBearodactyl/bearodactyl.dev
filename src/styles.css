@@ -64,7 +64,36 @@ body {
   margin: 0;
   padding: var(--spacing-md);
   min-height: 100vh;
+  position: relative;
   background: linear-gradient(135deg, var(--bg-primary) 0%, #2a2d3a 100%);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top,
+      var(--bg-primary) 0%,
+      rgba(30, 30, 46, 0.8) 30%,
+      rgba(30, 30, 46, 0.5) 60%,
+      transparent 100%);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+body.scrolled::after {
+  opacity: 1;
+}
+
+.epic-tracks-player,
+.dance,
+.custom-song-drop {
+  position: relative;
+  z-index: 1;
 }
 
 /* ========================================
@@ -322,6 +351,12 @@ button:disabled {
 
 #dance-gif:hover {
   filter: drop-shadow(0 0 7px var(--accent-blue)) brightness(1.05);
+}
+
+#death-to-america {
+  display: none;
+  opacity: 0;
+  transition: opacity 1s;
 }
 
 /* ========================================

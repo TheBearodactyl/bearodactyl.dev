@@ -555,6 +555,20 @@ class AudioPlayerController {
 }
 
 function initialize_effects(): void {
+  function death_to_america(): void {
+    const dta = document.getElementById("death-to-america");
+    if (!dta) return;
+
+    window.addEventListener("scroll", () => {
+      if (dta.style.display !== "block") {
+        dta.style.display = "block";
+        setTimeout(() => {
+          dta.style.opacity = "1";
+        }, 50);
+      }
+    });
+  }
+
   const audio_controller = new AudioPlayerController();
   const font_effects_toggle = document.getElementById("font-effects-toggle");
   const color_effects_toggle = document.getElementById("color-effects-toggle");
@@ -586,6 +600,7 @@ function initialize_effects(): void {
 
   audio_controller.init_shuffle_and_theme_btns();
   audio_controller.setup_drag_drop();
+  death_to_america()
 }
 
 document.addEventListener("DOMContentLoaded", initialize_effects);

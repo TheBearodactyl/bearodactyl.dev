@@ -183,7 +183,6 @@ interface AudioPlayerControllerOptions {
   prev_btn?: string;
   song_picker?: string;
   shuffle_toggle?: string;
-  theme_toggle?: string;
 }
 
 class AudioPlayerController {
@@ -199,11 +198,18 @@ class AudioPlayerController {
   next_btn?: HTMLElement | null;
   prev_btn?: HTMLElement | null;
   shuffle_toggle?: HTMLElement | null;
-  theme_toggle?: HTMLElement | null;
   song_picker?: HTMLSelectElement | null;
   rainbow_effect: EffectHandle | null = null;
   current_song_index = 0;
   is_shuffling: boolean = false;
+  font_effects_enabled: boolean = true;
+  color_effects_enabled: boolean = true;
+  is_playing: boolean = false;
+  custom_songs: string[] = [];
+  shuffled_playlist: string[] = [];
+  shuffle_index: number = 0;
+  font_effect_handles: EffectHandle[] = [];
+  color_effect_handles: EffectHandle[] = [];
 
   constructor({
     player_id = "audio-player",
@@ -219,7 +225,6 @@ class AudioPlayerController {
     prev_btn = "prev",
     song_picker = "song-picker",
     shuffle_toggle = "shuffle-toggle",
-    theme_toggle = "theme-toggle"
   }: AudioPlayerControllerOptions = {}) {
     const player = document.getElementById(player_id) as HTMLAudioElement | null;
     if (!player) throw new Error("Audio player element not found");
@@ -237,9 +242,10 @@ class AudioPlayerController {
     this.prev_btn = document.getElementById(prev_btn);
     this.song_picker = document.getElementById(song_picker) as HTMLSelectElement | null;
     this.shuffle_toggle = document.getElementById(shuffle_toggle);
-    this.theme_toggle = document.getElementById(theme_toggle);
 
     this.initialize();
+    this.load_settings();
+    this.load_custom_songs();
   }
 
   initialize(): void {
@@ -250,17 +256,25 @@ class AudioPlayerController {
     }
   }
 
+  shuffle_songs(): void {
+    this.shuffled_playlist = [...SONGS].sort(() => Math.random() - 0.5);
+    this.shuffle_index = 0;
+  }
+
   init_shuffle_and_theme_btns(): void {
     const shuffle_btn = this.shuffle_toggle;
 
     shuffle_btn?.addEventListener("click", () => {
       this.is_shuffling = !this.is_shuffling;
       shuffle_btn.textContent = this.is_shuffling ? "Every Day I'm Shufflin'" : "No more shufflin :(";
+      this.save_settings();
     });
 
-    this.theme_toggle?.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-    });
+    shuffle_btn && (shuffle_btn.textContent = this.is_shuffling ? "Every Day I'm Shufflin'" : "No more shufflin :(");
+
+    if (this.is_shuffling) {
+      this.shuffle_songs();
+    }
   }
 
   setup_drag_drop(): void {
@@ -286,11 +300,15 @@ class AudioPlayerController {
         this.player.src = url;
         this.player.play();
         document.getElementById("song-name")!.textContent = `Song: ${files[0].name}`;
+
+        this.custom_songs.push(url);
+        this.save_custom_songs();
+        this.update_song_picker();
       }
     });
   }
 
-  private update_song_name(): void {
+  update_song_name(): void {
     const song = this.player.src.split("/").pop();
     document.getElementById("song-name")!.textContent = `🎶 Now Playing: ${decodeURIComponent(song ?? "Unknown")}`;
   }
@@ -319,15 +337,18 @@ class AudioPlayerController {
   }
 
   handle_play(): void {
+    this.is_playing = true;
     this.player.play();
     if (this.dance_image) {
       this.dance_image.style.display = "block";
       this.dance_image.src = "assets/epicsauce.gif";
       this.rainbow_effect = DomEffects.woke_mind_virus("dance-gif", 5, 3);
     }
+    this.update_song_name();
   }
 
   handle_pause(): void {
+    this.is_playing = false;
     this.player.pause();
     if (this.dance_image) {
       this.dance_image.src = "assets/brocollie.png";
@@ -337,6 +358,7 @@ class AudioPlayerController {
   }
 
   handle_stop(): void {
+    this.is_playing = false;
     this.player.pause();
     this.player.currentTime = 0;
     this.change_song_source(0);
@@ -374,32 +396,39 @@ class AudioPlayerController {
     }
     this.rainbow_effect?.stop();
     this.rainbow_effect = null;
+
+    this.handle_next_song();
   }
 
   handle_next_song(): void {
     if (this.is_shuffling) {
-      let next_song_idx: number;
-      do {
-        next_song_idx = Math.floor(Math.random() * SONGS.length);
-      } while (next_song_idx === this.current_song_index);
+      if (this.shuffled_playlist.length === 0 || this.shuffle_index >= this.shuffled_playlist.length) {
+        this.shuffle_songs();
+      }
 
-      this.current_song_index = next_song_idx;
+      const next_song = this.shuffled_playlist[this.shuffle_index++];
+      this.current_song_index = SONGS.indexOf(next_song);
+      this.player.src = next_song;
     } else {
       this.current_song_index = (this.current_song_index + 1) % SONGS.length;
+      this.player.src = SONGS[this.current_song_index];
     }
 
-    this.change_song_source(this.current_song_index);
-    this.player.pause();
-    this.player.play();
     this.update_song_name();
+    if (this.is_playing) {
+      this.player.play();
+    }
   }
 
   handle_prev_song(): void {
     this.current_song_index = (this.current_song_index - 1 + SONGS.length) % SONGS.length;
     this.change_song_source(this.current_song_index);
     this.update_time_display();
-    this.player.pause();
-    this.player.play();
+    if (this.is_playing) {
+      this.player.pause();
+      this.player.play();
+    }
+    this.update_song_name();
   }
 
   change_song_source(index: number): void {
@@ -407,6 +436,7 @@ class AudioPlayerController {
       this.player.src = SONGS[index];
       this.music_src.value = SONGS[index];
     }
+    this.update_song_name();
   }
 
   handle_song_change(): void {
@@ -419,34 +449,141 @@ class AudioPlayerController {
     this.player.play();
     this.update_song_name();
   }
+
+  load_settings(): void {
+    const settings = localStorage.getItem("settings");
+
+    if (settings) {
+      const parsed = JSON.parse(settings);
+      this.font_effects_enabled = parsed.font_effects !== false;
+      this.color_effects_enabled = parsed.color_effects !== false;
+      this.is_shuffling = parsed.shuffle || false;
+
+      if (this.volume_control) {
+        this.volume_control.value = parsed.volume || '0.75';
+        this.player.volume = Number(this.volume_control.value);
+      }
+    }
+  }
+
+  save_settings(): void {
+    localStorage.setItem("settings", JSON.stringify({
+      font_effects: this.font_effects_enabled,
+      color_effects: this.color_effects_enabled,
+      shuffle: this.is_shuffling,
+      volume: this.volume_control?.value || '0.75'
+    }));
+  }
+
+  load_custom_songs(): void {
+    const songs = localStorage.getItem("custom_songs");
+    if (songs) {
+      this.custom_songs = JSON.parse(songs);
+      this.update_song_picker();
+    }
+  }
+
+  save_custom_songs(): void {
+    localStorage.setItem("custom_songs", JSON.stringify(this.custom_songs));
+  }
+
+  update_song_picker(): void {
+    if (!this.song_picker) return;
+    this.song_picker.innerHTML = '';
+
+    SONGS.forEach(song => {
+      const option = document.createElement("option");
+      option.value = song;
+      option.textContent = `Song: ${song.split('/').pop()}`;
+      this.song_picker!.append(option);
+    });
+
+    this.custom_songs.forEach(song => {
+      const option = document.createElement("option");
+      option.value = song;
+      option.textContent = `Custom: ${song.split('/').pop()}`;
+      this.song_picker!.appendChild(option);
+    });
+  }
+
+  apply_font_effects(): void {
+    const class_selectors: string[] = [
+      "epic-tracks-player", "dance", "player-controls",
+      "volume-control", "time-display", "track-switcher",
+      "options-bar"
+    ];
+
+    const id_selectors: string[] = [
+      "dance-gif", "audio-player", "play-btn",
+      "pause-btn", "stop-btn", "volume",
+      "e", "p", "i", "cspace", "t", "r", "a", "c", "k", "s",
+      "spaceone", "spacetwo", "spacethree", "spacefour",
+      "volume", "volume-label", "current-time", "duration",
+      "prev", "next", "song-picker", "shuffle-toggle", "theme-toggle"
+    ];
+
+    this.font_effect_handles = [
+      ...class_selectors.map(cls => DomEffects.random_font_for_class(cls, 0.3, EXTENDED_FONTS)),
+      ...id_selectors.map(id => DomEffects.random_font_for_id(id, 0.5, EXTENDED_FONTS))
+    ];
+  }
+
+  remove_font_effects(): void {
+    this.font_effect_handles.forEach(handle => handle.stop());
+    this.font_effect_handles = [];
+  }
+
+  apply_color_effects(): void {
+    const id_selectors: string[] = [
+      "dance-gif", "audio-player", "play-btn",
+      "pause-btn", "stop-btn", "volume",
+      "e", "p", "i", "cspace", "t", "r", "a", "c", "k", "s",
+      "spaceone", "spacetwo", "spacethree", "spacefour",
+      "volume", "volume-label", "current-time", "duration",
+      "prev", "next", "song-picker", "shuffle-toggle", "theme-toggle"
+    ];
+
+    this.color_effect_handles = id_selectors.map(id =>
+      DomEffects.start_color_change(id, 200)
+    );
+  }
+
+  remove_color_effects(): void {
+    this.color_effect_handles.forEach(handle => handle.stop());
+    this.color_effect_handles = [];
+  }
 }
 
 function initialize_effects(): void {
-  const class_selectors: string[] = [
-    "epic-tracks-player", "dance", "player-controls",
-    "volume-control", "time-display", "track-switcher",
-    "options-bar"
-  ];
-
-  const id_selectors: string[] = [
-    "dance-gif", "audio-player", "play-btn",
-    "pause-btn", "stop-btn", "volume",
-    "e", "p", "i", "cspace", "t", "r", "a", "c", "k", "s",
-    "spaceone", "spacetwo", "spacethree", "spacefour",
-    "volume", "volume-label", "current-time", "duration",
-    "prev", "next", "song-picker", "shuffle-toggle", "theme-toggle"
-  ];
-
-  class_selectors.forEach(selector => {
-    DomEffects.random_font_for_class(selector, 0.3, EXTENDED_FONTS);
-  });
-
-  id_selectors.forEach(selector => {
-    DomEffects.random_font_for_id(selector, 0.5, EXTENDED_FONTS);
-    DomEffects.start_color_change(selector, 200);
-  });
-
   const audio_controller = new AudioPlayerController();
+  const font_effects_toggle = document.getElementById("font-effects-toggle");
+  const color_effects_toggle = document.getElementById("color-effects-toggle");
+
+  font_effects_toggle?.addEventListener("click", () => {
+    audio_controller.font_effects_enabled = !audio_controller.font_effects_enabled;
+    font_effects_toggle.textContent = `Font Effects: ${audio_controller.font_effects_enabled ? 'On' : 'Off'}`;
+    if (audio_controller.font_effects_enabled) {
+      audio_controller.apply_font_effects();
+    } else {
+      audio_controller.remove_font_effects();
+    }
+    audio_controller.save_settings();
+  });
+
+  color_effects_toggle?.addEventListener("click", () => {
+    audio_controller.color_effects_enabled = !audio_controller.color_effects_enabled;
+    color_effects_toggle.textContent = `Color Effects: ${audio_controller.color_effects_enabled ? 'On' : 'Off'}`;
+    if (audio_controller.color_effects_enabled) {
+      audio_controller.apply_color_effects();
+    } else {
+      audio_controller.remove_color_effects();
+    }
+    audio_controller.save_settings();
+  });
+
+  font_effects_toggle && (font_effects_toggle.textContent = `Font Effects: ${audio_controller.font_effects_enabled ? 'On' : 'Off'}`);
+  color_effects_toggle && (color_effects_toggle.textContent = `Color Effects: ${audio_controller.color_effects_enabled ? 'On' : 'Off'}`);
+
   audio_controller.init_shuffle_and_theme_btns();
   audio_controller.setup_drag_drop();
 }

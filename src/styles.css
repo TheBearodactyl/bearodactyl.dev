@@ -357,6 +357,7 @@ button:disabled {
   display: none;
   opacity: 0;
   transition: opacity 1s;
+  margin-top: 700px;
 }
 
 /* ========================================
@@ -387,6 +388,38 @@ button:disabled {
 }
 
 .custom-song-drop.dragging {
+  background: rgba(137, 180, 250, 0.2);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(137, 180, 250, 0.3);
+}
+
+#custom-song-drop {
+  border: 2px dashed var(--accent-blue-hover);
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) auto;
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  font-style: italic;
+  color: var(--text-secondary);
+  border-radius: var(--radius-xl);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  background: linear-gradient(145deg, transparent, rgba(137, 180, 250, 0.05));
+}
+
+#custom-song-drop:hover {
+  background: rgba(137, 180, 250, 0.1);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  transform: translateY(-2px);
+}
+
+#custom-song-drop.dragging {
   background: rgba(137, 180, 250, 0.2);
   border-color: var(--accent-blue);
   color: var(--accent-blue);

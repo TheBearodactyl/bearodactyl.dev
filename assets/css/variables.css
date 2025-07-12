@@ -40,4 +40,9 @@
   /* Typography */
   --font-primary: 'Comic Sans MS', sans-serif;
   --font-fantasy: "Comic Sans MS", sans-serif;
+
+  /* Misc */
+  --golden-ratio: 1.618;
+  --button-width: 15vw;
+  --button-height: calc(var(--button-width) / var(--golden-ratio));
 }

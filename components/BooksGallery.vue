@@ -105,6 +105,19 @@ const books = ref([
             { title: "Wikipedia", url: "https://en.wikipedia.org/wiki/Juden_Chan" },
         ]
     },
+    {
+        id: 3,
+        title: "One Piece",
+        author: "Eiichiro Oda",
+        genre: "Fiction",
+        rating: 500000,
+        coverImage: "https://wallpapers.com/images/hd/monkey-d-luffy-one-piece-character-ncbn2w69dzvewvem.jpg",
+        description: "Fictional pirates overthrow corrupt establishments because one of the victims gave Luffy a half-eaten McNugget",
+        myThoughts: "This is by far the peak of fiction in a very objective sense. This is not an opinion, it's a fact",
+        links: [
+            { title: "Wikipedia", url: "https://en.wikipedia.org/wiki/One_Piece" }
+        ]
+    },
 ])
 
 const toggleCard = (bookId) => {

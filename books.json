@@ -14,5 +14,16 @@
         "url": "https://en.wikipedia.org/wiki/Juden_Chan"
       }
     ]
+  },
+  {
+    "id": 2,
+    "title": "One Piece",
+    "author": "Eiichiro Oda",
+    "genre": "Fiction",
+    "rating": 5,
+    "coverImage": "https://wallpapers.com/images/hd/monkey-d-luffy-one-piece-character-ncbn2w69dzvewvem.jpg",
+    "description": "Fictional pirates overthrow corrupt establishments because one of the victims gave Luffy a half-eaten McNugget",
+    "myThoughts": "This is by far the peak of fiction in a very broad sense",
+    "links": []
   }
 ]

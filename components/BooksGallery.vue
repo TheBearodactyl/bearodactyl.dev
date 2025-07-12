@@ -14,7 +14,7 @@
                         <div class="book-genre">{{ book.genre }}</div>
                         <div class="book-rating">
                             <span class="stars">
-                                <span v-for="star in 5" :key="star" class="star"
+                                <span v-for="star in (book.title === 'One Piece' ? 50 : 5)" :key="star" class="star"
                                     :class="{ 'filled': star <= book.rating }">★</span>
                             </span>
                             <span class="rating-text">{{ book.rating }}/5</span>
@@ -35,7 +35,7 @@
                             <div class="expanded-genre">{{ book.genre }}</div>
                             <div class="expanded-rating">
                                 <span class="stars">
-                                    <span v-for="star in 5" :key="star" class="star"
+                                    <span v-for="star in (book.title === 'One Piece' ? 50 : 5)" :key="star" class="star"
                                         :class="{ 'filled': star <= book.rating }">★</span>
                                 </span>
                                 <span class="rating-text">{{ book.rating }}/5</span>
@@ -110,7 +110,7 @@ const books = ref([
         title: "One Piece",
         author: "Eiichiro Oda",
         genre: "Fiction",
-        rating: 500000,
+        rating: 50,
         coverImage: "https://wallpapers.com/images/hd/monkey-d-luffy-one-piece-character-ncbn2w69dzvewvem.jpg",
         description: "Fictional pirates overthrow corrupt establishments because one of the victims gave Luffy a half-eaten McNugget",
         myThoughts: "This is by far the peak of fiction in a very objective sense. This is not an opinion, it's a fact",

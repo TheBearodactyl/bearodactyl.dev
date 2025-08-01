@@ -1,95 +1,95 @@
 {
     "index": {
         "title": "The Motherfucking Bearodactyl",
-        "desc": "this is my website, check out some stuff i made (it's a bit buggy)",
+        "desc": "これが俺のウェブサイトだ。作ったことを見てみよう！（ちょっとバグがあるよ）",
 		"footer-lines": {
-			"line-one": "All icons made by me in Inkscape",
-			"line-two": "All code on this website is within the public domain",
-			"line-three": "See ",
-			"line-four": "Rabies before Babies"
+			"line-one": "全アイコンは俺にInkscapeで作られました",
+			"line-two": "このウェブサイトのコードはすべてパブリックドメイン内です",
+			"line-three": "ライセンスを確認 ",
+			"line-four": "子育てより、むしろ狂犬病の方がいい"
 		}
     },
     "gallery": {
-        "explicit": "Contains Explicit Content",
+        "explicit": "成人向け",
         "expanded": {
-            "description": "Description",
-            "my-thoughts": "My Thoughts",
-            "links": "Links",
-            "genres": "Genres",
-            "tags": "Tags"
+            "description": "説明",
+            "my-thoughts": "個人的意見",
+            "links": "リンク",
+            "genres": "ジャンル",
+            "tags": "タグ"
         },
         "filters": {
-            "search": "Search...",
-            "any-rating": "Any Rating",
-            "any-status": "Any Status",
-            "title": "Title",
-            "search-title": "Search title...",
-            "search-author": "Search author...",
-            "search-developer": "Search developer...",
-            "genres": "Genres",
-            "tags": "Tags",
+            "search": "検索...",
+            "any-rating": "任意の評価",
+            "any-status": "任意のステータス",
+            "title": "タイトル",
+            "search-title": "タイトルの検索...",
+            "search-author": "作者の検索...",
+            "search-developer": "開発者の検索...",
+            "genres": "ジャンル",
+            "tags": "タグ",
             "status": {
                 "book": {
-                    "reading": "Reading",
-                    "finished": "Finished",
-                    "plan-to-read": "Plan to Read",
-                    "dropped": "Dropped"
+                    "reading": "読みかけ",
+                    "finished": "読み終わった",
+                    "plan-to-read": "読む予定",
+                    "dropped": "読むのはやめた"
                 },
                 "game": {
-                    "playing": "Playing",
-                    "finished": "Finished",
-                    "plan-to-play": "Plan to Play",
-                    "dropped": "Dropped"
+                    "playing": "プレイしかけ",
+                    "finished": "プレイし終わった",
+                    "plan-to-play": "プレイする予定",
+                    "dropped": "プレイはやめた"
                 }
             },
-            "select-genres": "Select Genres",
-            "select-tags": "Select Tags",
-            "no-genres": "No genres available",
-            "no-tags": "No tags available",
-            "clear": "Clear Filters"
+            "select-genres": "ジャンルを選択",
+            "select-tags": "タグを選択",
+            "no-genres": "利用可能のジャンルなし",
+            "no-tags": "利用可能のタグなし",
+            "clear": "フィルタをクリア"
         },
         "book": {
-            "cover-alt": "Cover art of {title}",
+            "cover-alt": "{title}の表紙絵画",
             "rating-out-of-five": "{rating}/5",
             "rating": "{rating}+"
         },
         "review": {
-            "chapter-number": "Chapter {chapter}",
-            "rating": "Rating:",
-            "my-thoughts": "Thoughts:\n{thoughts}"
+            "chapter-number": "第{chapter}章",
+            "rating": "評価:",
+            "my-thoughts": "個人的意見:\n{thoughts}"
         },
         "project": {
-            "view-source": "View Source",
-            "install-command": "{mode} Install Command",
-            "no-install-command": "No install command available",
+            "view-source": "ソースコードを表示",
+            "install-command": "{mode} インストールの命令",
+            "no-install-command": "利用可能のインストールの命令なし",
             "modes": {
-                "hide": "Hide",
-                "show": "Show"
+                "hide": "非表示",
+                "show": "表示"
             }
         }
     },
     "titles": {
-        "read-watch": "Read/Watch List",
-        "games": "Games List",
-        "op-reviews": "My One Piece Chapter Reviews",
-        "projects": "My Projects"
+        "read-watch": "読書/視聴のリスト",
+        "games": "ゲームのリスト",
+        "op-reviews": "俺のワンピースの各章のレビュー",
+        "projects": "俺のプロジェクト"
     },
     "indicators": {
-        "loading": "Loading... {progress}%",
-        "list-load-error": "[ERROR] - Couldn't load list: {err}",
-        "no-results": "No Results",
-        "click-to-play": "Click to play audio"
+        "loading": "ロード中... {progress}%",
+        "list-load-error": "[エラー] - リストのロードができませんでした: {err}",
+        "no-results": "検索結果なし",
+        "click-to-play": "クリックしてオーディオを再生する"
     },
     "license-lines": {
-        "line-one": "all code using this license is released to the public domain",
-        "line-two": "you wanna use it to make money? go ahead",
-        "line-three": "you wanna plagiarize it? sure",
-        "line-four": "you wanna make a porno using my code? go for it bud i don't give a shit",
-        "footer": "(i love using unnecessary animations :3)"
+        "line-one": "このライセンスの使用するコードはすべてパブリックドメインに公開している。",
+        "line-two": "収益化したいのか？　オーケー",
+        "line-three": "盗作したいのか？　構わん",
+        "line-four": "俺のコードでポルノを作りたいのか?　それもできるよ、どうでもいいよ",
+        "footer": "(不必要なアニメーションを使うのが楽しいよ :3)"
     },
     "quick-menu": {
-        "routes": "routes",
-        "nav-to-page": "Navigate to page",
-        "toggle-menu": "Toggle menu"
+        "routes": "ルート",
+        "nav-to-page": "ページに移動",
+        "toggle-menu": "メニューを切り替え"
     }
 }

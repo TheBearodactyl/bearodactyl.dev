@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\BooksController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,5 +22,6 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('reviews', ReviewController::class);
 Route::resource('projects', ProjectController::class);
+Route::resource('books', BooksController::class);
 
 require __DIR__.'/auth.php';

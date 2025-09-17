@@ -10,6 +10,7 @@
     <nav>
         <a href="{{ route('reviews.index') }}">Reviews</a>
         <a href="{{ route('projects.index') }}">Projects</a>
+        <a href="{{ route('books.index') }}">Read/Watch List</a>
     </nav>
 
     <main>

@@ -1,140 +1,56 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.2-fpm
 
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
-    oniguruma-dev \
+    libonig-dev \
     libxml2-dev \
     zip \
     unzip \
-    sqlite \
-    sqlite-dev \
-    bash \
-    nodejs \
-    npm \
+    sqlite3 \
+    libsqlite3-dev \
     nginx \
-    supervisor
-
-RUN docker-php-ext-install pdo pdo_sqlite mbstring exif pcntl bcmath gd
+    fish \
+    supervisor \
+    && docker-php-ext-install pdo pdo_sqlite mbstring exif pcntl bcmath gd \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH="/root/.bun/bin:$PATH"
+ENV PATH="/root/.bun/bin:${PATH}"
 
-COPY . .
+COPY . /var/www
 
-RUN mkdir -p /var/www/html/database \
-    && touch /var/www/html/database/database.sqlite \
-    && mkdir -p /var/www/html/storage/framework/cache/data \
-    && mkdir -p /var/www/html/storage/framework/sessions \
-    && mkdir -p /var/www/html/storage/framework/testing \
-    && mkdir -p /var/www/html/storage/framework/views \
-    && mkdir -p /var/www/html/bootstrap/cache
+COPY --chown=www-data:www-data . /var/www
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-RUN bun install --frozen-lockfile
-RUN bun run build
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www/storage \
+    && chmod -R 755 /var/www/bootstrap/cache
 
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache \
-    && chmod -R 755 /var/www/html/database \
-    && chmod 664 /var/www/html/database/database.sqlite
+RUN composer install --no-dev --optimize-autoloader
 
-RUN php artisan key:generate --force
-RUN php artisan config:clear || true
-RUN php artisan route:clear || true
-RUN php artisan view:clear || true
-RUN php artisan config:cache || true
-RUN php artisan route:cache || true
+RUN if [ -f "package.json" ]; then bun install; fi
 
-RUN rm /etc/nginx/http.d/default.conf
-COPY <<EOF /etc/nginx/http.d/laravel.conf
-server {
-    listen 80;
-    server_name localhost;
-    root /var/www/html/public;
-    index index.php index.html;
+RUN if [ -f "package.json" ]; then bun run build; fi
 
-    client_max_body_size 100M;
+RUN mkdir -p /var/www/storage/logs \
+    && mkdir -p /var/www/storage/framework/{cache,sessions,views} \
+    && mkdir -p /var/www/bootstrap/cache
 
-    location / {
-        try_files \$uri \$uri/ /index.php?\$query_string;
-    }
+RUN touch /var/www/database/database.sqlite \
+    && chown www-data:www-data /var/www/database/database.sqlite \
+    && chmod 664 /var/www/database/database.sqlite
 
-    location ~ \.php$ {
-        fastcgi_pass 127.0.0.1:9000;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
-        fastcgi_param PATH_INFO \$fastcgi_path_info;
-        include fastcgi_params;
+COPY docker/nginx.conf /etc/nginx/sites-available/default
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-        # Increase timeout values
-        fastcgi_read_timeout 300;
-        fastcgi_connect_timeout 300;
-        fastcgi_send_timeout 300;
-    }
+RUN mkdir -p /var/log/nginx
 
-    location ~ /\.ht {
-        deny all;
-    }
+EXPOSE 2379
 
-    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-        try_files \$uri =404;
-    }
-}
-EOF
-
-RUN sed -i 's/listen = \/run\/php\/php8.3-fpm.sock/listen = 127.0.0.1:9000/' /usr/local/etc/php-fpm.d/www.conf || \
-    echo 'listen = 127.0.0.1:9000' >> /usr/local/etc/php-fpm.d/www.conf
-
-COPY <<EOF /etc/supervisor/conf.d/supervisord.conf
-[supervisord]
-nodaemon=true
-user=root
-logfile=/var/log/supervisor/supervisord.log
-pidfile=/var/run/supervisord.pid
-
-[program:php-fpm]
-command=php-fpm
-autostart=true
-autorestart=true
-stderr_logfile=/var/log/supervisor/php-fpm.err.log
-stdout_logfile=/var/log/supervisor/php-fpm.out.log
-
-[program:nginx]
-command=nginx -g "daemon off;"
-autostart=true
-autorestart=true
-stderr_logfile=/var/log/supervisor/nginx.err.log
-stdout_logfile=/var/log/supervisor/nginx.out.log
-EOF
-
-RUN mkdir -p /var/log/supervisor
-
-COPY <<'EOF' /entrypoint.sh
-#!/bin/bash
-
-sleep 2
-
-chown -R www-data:www-data /var/www/html/storage
-chown -R www-data:www-data /var/www/html/
-chmod -R 755 /var/www/html/storage
-chmod -R 755 /var/www/html/
-
-php artisan view:clear || true
-
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
-EOF
-
-RUN chmod +x /entrypoint.sh
-
-EXPOSE 80
-
-CMD ["/entrypoint.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

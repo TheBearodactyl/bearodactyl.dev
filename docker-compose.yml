@@ -1,24 +1,30 @@
+version: "3.8"
+
 services:
     laravel-app:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: laravel-fullstack
+        container_name: laravel-app
         restart: unless-stopped
         ports:
-            - "2379:80"
+            - "2379:2379"
         volumes:
-            - ./database:/var/www/html/database
-            - ./storage/app:/var/www/html/storage/app
-            - ./storage/logs:/var/www/html/storage/logs
+            - .:/var/www
+            - ./storage:/var/www/storage
+            - ./database:/var/www/database
         environment:
             - APP_ENV=production
             - APP_DEBUG=false
             - DB_CONNECTION=sqlite
-            - DB_DATABASE=/var/www/html/database/database.sqlite
+            - DB_DATABASE=/var/www/database/database.sqlite
         networks:
             - laravel-network
 
 networks:
     laravel-network:
         driver: bridge
+
+volumes:
+    laravel-storage:
+        driver: local

@@ -6,7 +6,7 @@ services:
         container_name: laravel-fullstack
         restart: unless-stopped
         ports:
-            - "2379:9000"
+            - "2379:80"
         volumes:
             - ./database:/var/www/html/database
             - ./storage/app:/var/www/html/storage/app
@@ -22,6 +22,3 @@ services:
 networks:
     laravel-network:
         driver: bridge
-
-volumes:
-    sqlite-data:

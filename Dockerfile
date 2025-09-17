@@ -28,7 +28,12 @@ ENV PATH="/root/.bun/bin:$PATH"
 COPY . .
 
 RUN mkdir -p /var/www/html/database \
-    && touch /var/www/html/database/database.sqlite
+    && touch /var/www/html/database/database.sqlite \
+    && mkdir -p /var/www/html/storage/framework/cache/data \
+    && mkdir -p /var/www/html/storage/framework/sessions \
+    && mkdir -p /var/www/html/storage/framework/testing \
+    && mkdir -p /var/www/html/storage/framework/views \
+    && mkdir -p /var/www/html/bootstrap/cache
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN bun install --frozen-lockfile
@@ -41,9 +46,11 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod 664 /var/www/html/database/database.sqlite
 
 RUN php artisan key:generate --force
+RUN php artisan config:clear || true
+RUN php artisan route:clear || true
+RUN php artisan view:clear || true
 RUN php artisan config:cache || true
 RUN php artisan route:cache || true
-RUN php artisan view:cache || true
 
 RUN rm /etc/nginx/http.d/default.conf
 COPY <<EOF /etc/nginx/http.d/laravel.conf
@@ -53,6 +60,8 @@ server {
     root /var/www/html/public;
     index index.php index.html;
 
+    client_max_body_size 100M;
+
     location / {
         try_files \$uri \$uri/ /index.php?\$query_string;
     }
@@ -61,14 +70,20 @@ server {
         fastcgi_pass 127.0.0.1:9000;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
+        fastcgi_param PATH_INFO \$fastcgi_path_info;
         include fastcgi_params;
+
+        # Increase timeout values
+        fastcgi_read_timeout 300;
+        fastcgi_connect_timeout 300;
+        fastcgi_send_timeout 300;
     }
 
     location ~ /\.ht {
         deny all;
     }
 
-    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg)$ {
+    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
         try_files \$uri =404;
@@ -103,6 +118,23 @@ EOF
 
 RUN mkdir -p /var/log/supervisor
 
+COPY <<'EOF' /entrypoint.sh
+#!/bin/bash
+
+sleep 2
+
+chown -R www-data:www-data /var/www/html/storage
+chown -R www-data:www-data /var/www/html/
+chmod -R 755 /var/www/html/storage
+chmod -R 755 /var/www/html/
+
+php artisan view:clear || true
+
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+EOF
+
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 80
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/entrypoint.sh"]

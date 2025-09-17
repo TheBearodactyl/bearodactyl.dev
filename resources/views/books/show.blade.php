@@ -1,29 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="md:flex">
-                <!-- Book Cover -->
-                <div class="md:w-1/3">
-                    <img src="{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-96 md:h-full object-cover">
+    <main class="container">
+        <div class="card">
+            <div class="book-detail">
+
+                <div class="book-detail-cover">
+                    <img src="{{ $book->cover_image }}" alt="{{ $book->title }}">
                 </div>
 
-                <!-- Book Details -->
-                <div class="md:w-2/3 p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <h1 class="text-3xl font-bold text-gray-900">{{ $book->title }}</h1>
+
+                <div class="book-detail-info">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                        <h1>{{ $book->title }}</h1>
                         @if ($book->explicit)
-                            <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm font-medium">
+                            <span class="explicit-badge">
                                 Explicit
                             </span>
                         @endif
                     </div>
 
-                    <p class="text-xl text-gray-600 mb-4">by {{ $book->author }}</p>
+                    <p class="book-detail-author">by {{ $book->author }}</p>
 
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="flex text-yellow-400 text-xl">
+                    <div class="book-detail-rating">
+                        <div class="book-stars">
                             @for ($i = 1; $i <= 5; $i++)
                                 @if ($i <= $book->rating)
                                     ⭐
@@ -31,102 +32,103 @@
                                     ☆
                                 @endif
                             @endfor
-                            <span class="text-gray-600 ml-2">{{ $book->rating }}/5</span>
+                            <span style="color: var(--rp-subtle); margin-left: 0.5rem;">{{ $book->rating }}/5</span>
                         </div>
 
-                        <span
-                            class="px-3 py-1 rounded-full text-sm font-medium
-                                 {{ $book->status === 'completed' ? 'bg-green-100 text-green-800' : '' }}
-                                 {{ $book->status === 'reading' ? 'bg-blue-100 text-blue-800' : '' }}
-                                 {{ $book->status === 'planned' ? 'bg-gray-100 text-gray-800' : '' }}">
+                        <span class="book-status status-{{ $book->status }}">
                             {{ ucfirst($book->status) }}
                         </span>
                     </div>
 
-                    <!-- Genres -->
+
                     @if ($book->genres)
-                        <div class="mb-4">
-                            <h3 class="text-sm font-medium text-gray-700 mb-2">Genres</h3>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach ($book->genres as $genre)
-                                    <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                                        {{ $genre }}
-                                    </span>
-                                @endforeach
+                        <div class="book-detail-meta">
+                            <div class="meta-section">
+                                <h3>Genres</h3>
+                                <div class="tag-list">
+                                    @foreach ($book->genres as $genre)
+                                        <span class="tag">
+                                            {{ $genre }}
+                                        </span>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     @endif
 
-                    <!-- Tags -->
+
                     @if ($book->tags)
-                        <div class="mb-4">
-                            <h3 class="text-sm font-medium text-gray-700 mb-2">Tags</h3>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach ($book->tags as $tag)
-                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                        {{ $tag }}
-                                    </span>
-                                @endforeach
+                        <div class="book-detail-meta">
+                            <div class="meta-section">
+                                <h3>Tags</h3>
+                                <div class="tag-list">
+                                    @foreach ($book->tags as $tag)
+                                        <span class="tag"
+                                            style="background-color: rgba(49, 116, 143, 0.2); color: var(--rp-pine);">
+                                            {{ $tag }}
+                                        </span>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     @endif
 
-                    <!-- Links -->
+
                     @if ($book->links->count() > 0)
-                        <div class="mb-4">
-                            <h3 class="text-sm font-medium text-gray-700 mb-2">Links</h3>
-                            <div class="space-y-2">
-                                @foreach ($book->links as $link)
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm font-medium text-gray-600">{{ $link->key }}:</span>
-                                        <a href="{{ $link->value }}" target="_blank"
-                                            class="text-blue-600 hover:text-blue-800 underline text-sm">
-                                            {{ $link->value }}
-                                        </a>
-                                    </div>
-                                @endforeach
+                        <div class="book-detail-meta">
+                            <div class="meta-section">
+                                <h3>Links</h3>
+                                <div>
+                                    @foreach ($book->links as $link)
+                                        <div class="link-item">
+                                            <span
+                                                style="font-weight: 500; color: var(--rp-subtle);">{{ $link->key }}:</span>
+                                            <a href="{{ $link->value }}" target="_blank">
+                                                {{ $link->value }}
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     @endif
 
-                    <!-- Action Buttons -->
-                    <div class="flex gap-3 mt-6">
-                        <a href="{{ route('books.edit', $book) }}"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md">
+
+                    <div class="btn-group" style="margin-top: 1.5rem;">
+                        <a href="{{ route('books.edit', $book) }}" class="btn btn-primary">
                             Edit Book
                         </a>
 
-                        <form method="POST" action="{{ route('books.destroy', $book) }}" class="inline">
+                        <form method="POST" action="{{ route('books.destroy', $book) }}" style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" onclick="return confirm('Are you sure you want to delete this book?')"
-                                class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-md">
+                                class="btn btn-danger">
                                 Delete Book
                             </button>
                         </form>
 
-                        <a href="{{ route('books.index') }}"
-                            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md">
+                        <a href="{{ route('books.index') }}" class="btn btn-secondary">
                             Back to List
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Description and Thoughts -->
-            <div class="p-6 border-t bg-gray-50">
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Description</h3>
-                        <p class="text-gray-700 leading-relaxed">{{ $book->description }}</p>
+
+            <div class="book-content">
+                <div class="content-grid">
+                    <div class="content-section">
+                        <h3>Description</h3>
+                        <p>{{ $book->description }}</p>
                     </div>
 
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-3">My Thoughts</h3>
-                        <p class="text-gray-700 leading-relaxed">{{ $book->my_thoughts }}</p>
+                    <div class="content-section">
+                        <h3>My Thoughts</h3>
+                        <p>{{ $book->my_thoughts }}</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 @endsection

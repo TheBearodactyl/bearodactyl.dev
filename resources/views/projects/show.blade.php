@@ -5,7 +5,7 @@
 @section('content')
 <h1>{{ $project->name }}</h1>
 
-<div style="display: grid; grid-template-columns: 300px 1fr; gap: 30px;">
+<div>
     <div>
         <img src="{{ $project->cover_image }}" alt="{{ $project->name }}" style="width: 100%; height: 200px; object-fit: cover;">
 

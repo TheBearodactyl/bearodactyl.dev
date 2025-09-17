@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.reviews-gallery {
+    display: flex;
+}
+
+.review-item {
+    background-color: black;
+    color: white;
+    padding: 2rem;
+}
+
+.show-btn,
+.edit-btn {
+    background-color: purple;
+    padding: 0.3rem;
+    border: 1px solid;
+    border-radius: 12px;
+}

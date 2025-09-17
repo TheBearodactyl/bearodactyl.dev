@@ -75,7 +75,7 @@ class BooksController extends Controller
         DB::beginTransaction();
 
         try {
-            $validatedData = Book::create($request->validate([
+            $validatedData = $request->validate([
                 'title' => 'required|string|max:255',
                 'author' => 'required|string|max:255',
                 'genres' => 'sometimes|array',
@@ -92,7 +92,7 @@ class BooksController extends Controller
                 'links' => 'sometimes|array',
                 'links.*.key' => 'required_with:links|string|max:255',
                 'links.*.value' => 'required_with:links|string',
-            ]));
+            ]);
 
             $book = Book::create($validatedData);
 
@@ -110,7 +110,7 @@ class BooksController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => "Failed to create book: $e"], 500);
+            return response()->json(['error' => "Failed to create book: {$e->getMessage()}"], 500);
         }
     }
 

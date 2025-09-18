@@ -25,3 +25,7 @@ Thumbs.db
 
 # Sensitive data
 /database/seeders/AdminSeeder.php
+
+**/caddy
+frankenphp
+frankenphp-worker.php

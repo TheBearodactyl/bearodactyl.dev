@@ -1,0 +1,9 @@
+[package]
+name = "bearo-dev"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+include_dir = { version = "0.7.4", features = ["glob"] }
+rocket = { version = "0.5.1", features = ["json"] }
+tokio = { version = "1.49.0", features = ["full"] }

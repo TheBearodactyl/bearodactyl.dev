@@ -1,0 +1,35 @@
+services:
+  bearo-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bearo-dev:latest
+    container_name: bearo-dev
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      - ROCKET_ADDRESS=0.0.0.0
+      - ROCKET_PORT=8000
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8000/home/index.html",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 512M
+        reservations:
+          cpus: "1"
+          memory: 256M

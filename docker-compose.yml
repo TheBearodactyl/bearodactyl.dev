@@ -6,7 +6,7 @@ services:
     image: bearo-dev:latest
     container_name: bearo-dev
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:23791:23791"
     environment:
       - ROCKET_ADDRESS=0.0.0.0
       - ROCKET_PORT=8000
@@ -19,7 +19,7 @@ services:
           "--quiet",
           "--tries=1",
           "--spider",
-          "http://localhost:8000/home/index.html",
+          "http://localhost:23791/home/index.html",
         ]
       interval: 30s
       timeout: 10s

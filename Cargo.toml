@@ -2,6 +2,7 @@
 name = "bearo-dev"
 version = "0.1.0"
 edition = "2024"
+build = "build.rs"
 
 [dependencies]
 rocket = { version = "0.5.1", features = ["json"] }

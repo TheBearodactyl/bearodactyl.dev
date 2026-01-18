@@ -1,0 +1,45 @@
+.books-list {
+	column-count: 3;
+	column-gap: 20px;
+}
+
+.books-list ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.book-card {
+	display: inline-block;
+	width: 100%;
+	margin-bottom: 20px;
+	break-inside: avoid;
+}
+
+.book-card {
+	display: flex;
+	flex-direction: column;
+}
+
+.book-link {
+	color: var(--text-color);
+	margin-bottom: 8px;
+}
+
+.book-image {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+@media (max-width: 900px) {
+	.books-list {
+		column-count: 2;
+	}
+}
+
+@media (max-width: 600px) {
+	.books-list {
+		column-count: 1;
+	}
+}
